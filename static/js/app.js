@@ -50,6 +50,7 @@ async function toggleRecording() {
         // send audioBlob to server and get translation
         let formData = new FormData();
         formData.append('audio', audioBlob);
+        formData.append('input_language', document.getElementById('inputLanguage').value);
 
         fetch('/transcribe', {
             method: 'POST',
@@ -65,7 +66,7 @@ async function toggleRecording() {
                     headers: {
                         'Content-Type': 'application/json',
                     },
-                    body: JSON.stringify({ text: data.transcript }),
+                    body: JSON.stringify({ text: data.transcript, input_language: document.getElementById('inputLanguage').value, output_language: document.getElementById('outputLanguage').value }),
                 });
             })
             .then(response => response.json())

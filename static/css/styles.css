@@ -64,3 +64,16 @@ h1 {
     text-align: center;
     width: 100%;
 }
+
+/* Add styling for the language selectors */
+.lang-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    width: 100%;
+    margin-bottom: 20px;
+}
+
+.lang-selector {
+    width: 20%;
+}

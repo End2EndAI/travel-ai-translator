@@ -7,11 +7,11 @@ from flask import Flask, request, render_template, jsonify
 
 import openai
 
-openai.api_key = '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'
+openai.api_key = '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'
+
 
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = "C:\\tmp"  # set your upload folder path here
-
+app.config['UPLOAD_FOLDER'] = "./"  # set your upload folder path here
 
 @app.route('/')
 def index():
@@ -36,7 +36,9 @@ def transcribe_audio():
     while not os.path.exists(file_path):
         time.sleep(0.1)  # Sleep for a short duration before checking again
 
-    transcript = transcribe(file_path)
+    input_language = request.form['input_language']
+    
+    transcript = transcribe(file_path, input_language)
 
     return jsonify({'transcript': transcript})
 
@@ -44,30 +46,35 @@ def transcribe_audio():
 @app.route('/translate', methods=['POST'])
 def translate_audio():
     transcript = request.get_json()['text']
+    input_language = request.get_json()['input_language']
+    output_language = request.get_json()['output_language']
+    
     # set your target language here
-    translation = translate(transcript, target_language='en')
+    translation = translate(transcript, input_language=input_language, output_language=output_language)
 
     return jsonify({'translation': translation})
 
 
-def transcribe(file_path):
+def transcribe(file_path, input_language):
     audio_file = open(file_path, "rb")
 
     transcript = openai.Audio.transcribe(
-        "whisper-1", audio_file, language='fr')
+        "whisper-1", audio_file, language=input_language)
 
     return transcript['text']
 
 
-def translate(text, target_language):
+def translate(text, input_language, output_language):
     messages = [
-        {"role": "system", "content": "You are a helpful translator from french to english. \
-        You will receive a transcribe in french, and you have to translate in english. \
-        Take into account in the translation that the transcription has errors in it, correct the mistakes in the translation. \
+        {"role": "system", "content": f"You are a helpful translator. \
+        You will receive a transcribe in '{input_language}', and you have to translate in '{output_language}'. \
+        Take into account in the translation that the transcription may be incomplete or inaccurate. \
         The translation should be in spoken language."},
         {"role": "user", "content": f"Transcribe : {text}; Translation : "}
     ]
-    print(messages)
+
+    print(messages[0]['content'])
+    
     translation = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
         messages=messages
