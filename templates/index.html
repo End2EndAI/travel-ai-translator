@@ -1,0 +1,24 @@
+<!DOCTYPE html>
+<html>
+<head>
+    <title>Travel Translator</title>
+    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
+</head>
+<body>
+    <div class="app-container">
+        <h1>Travel Translator</h1>
+        <button id="recordButton" onclick="toggleRecording()">Start Recording</button>
+        <div id="transcriptContainer">
+            <h2>Transcript</h2>
+            <p id="transcript"></p>
+        </div>
+        <div id="translationContainer">
+            <h2>Translation</h2>
+            <p id="translation"></p>
+        </div>
+    </div>
+
+    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
+    <script src="{{ url_for('static', filename='js/app.js') }}"></script>
+</body>
+</html>
