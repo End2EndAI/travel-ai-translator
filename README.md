@@ -27,7 +27,7 @@ Follow the steps below to set up the project locally.
 
 ### Prerequisites
 
-You need to have Python and pip installed on your machine. You can download Python from here: https://www.python.org/downloads/.
+You need to have Python 3.9 and pip installed on your machine. You can download Python from here: https://www.python.org/downloads/.
 You also need an API key for OpenAI API.
 
 ### Installation
