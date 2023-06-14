@@ -62,6 +62,10 @@ def translate_audio():
     # Converting the translated text into speech
     tts = gTTS(translation, lang=req_data['output_language'])
 
+    # Remove the previous audio file
+    if not session.get('last_audio_file', None) == None:
+        os.remove(session.get('last_audio_file', ''))
+        
     # Saving the speech file to the audio directory
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
     filename = f"audio_{timestamp}.mp3"
