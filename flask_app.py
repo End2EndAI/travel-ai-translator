@@ -41,8 +41,8 @@ def transcribe_audio():
 
     input_language = request.form['input_language']
     
-    transcript = transcribe(file_path, input_language)
-
+    #transcript = transcribe(file_path, input_language)
+    transcript = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa"
     return jsonify({'transcript': transcript})
 
 
@@ -53,8 +53,9 @@ def translate_audio():
     output_language = request.get_json()['output_language']
     
     # set your target language here
-    translation = translate(transcript, input_language=input_language, output_language=output_language)
-
+    #translation = translate(transcript, input_language=input_language, output_language=output_language)
+    translation = "AAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaaAAAAAAAAAAAAAAAAAAAAAAAAAAAAAAaa"
+    
     return jsonify({'translation': translation})
 
 

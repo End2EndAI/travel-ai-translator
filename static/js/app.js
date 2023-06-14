@@ -10,7 +10,7 @@ async function toggleRecording() {
 
     if (!isRecording) {
         isRecording = true;
-        recordButton.textContent = 'Stop Recording';
+        recordButton.textContent = 'Stop';
         translation.textContent = '';
         transcript.textContent = '';
 
@@ -23,7 +23,7 @@ async function toggleRecording() {
         mediaRecorder.start();
 
     } else {
-        recordButton.textContent = 'Start Recording';
+        recordButton.textContent = 'Start';
 
         // Create a Promise that resolves when the 'stop' event is fired
         const stopPromise = new Promise(resolve => mediaRecorder.addEventListener('stop', resolve));
@@ -70,3 +70,20 @@ async function toggleRecording() {
             .catch(error => console.error('Error:', error));
     }
 }
+
+var arrow_image = document.getElementById('arrow');
+
+document.getElementById('arrow').addEventListener('click', function() {
+    var inputLangSelect = document.getElementById('inputLanguage');
+    var outputLangSelect = document.getElementById('outputLanguage');
+    
+    var temp = inputLangSelect.value;
+    inputLangSelect.value = outputLangSelect.value;
+    outputLangSelect.value = temp;
+
+    // Apply animation
+    arrow_image.classList.add('clicked');
+    setTimeout(function() {
+        arrow_image.classList.remove('clicked');
+    }, 300);
+});

@@ -2,6 +2,7 @@
 <html>
 <head>
     <title>Travel Translator</title>
+    <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
     <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
@@ -26,8 +27,8 @@
                 <option value="ko">Korean</option>
                 <option value="tr">Turkish</option>
                 <!-- Add more options as necessary -->
-            </select>            
-            <button id="recordButton" onclick="toggleRecording()">Start Recording</button>
+            </select>         
+            <img src="/static/img/arrow.png" alt="arrow" id="arrow"> 
             <select id="outputLanguage" class="lang-selector">
                 <option value="en">English</option>
                 <option value="fr">French</option>
@@ -48,13 +49,14 @@
                 <!-- Add more options as necessary -->
             </select>
         </div>
+    <button id="recordButton" onclick="toggleRecording()">Start</button>
         <div id="transcriptContainer">
-            <h2>Transcript</h2>
-            <p id="transcript"></p>
+            <h2 id="transcriptText">Transcript</h2>
+            <div id="transcript"></div>
         </div>
         <div id="translationContainer">
-            <h2>Translation</h2>
-            <p id="translation"></p>
+            <h2 id="translationText">Translation</h2>
+            <div id="translation"></div>
         </div>
     </div>
 
