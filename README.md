@@ -1,79 +1,84 @@
-# Travel-Translator
+# Travel Translator
 
-Travel-Translator is a unique application that enables effortless cross-language conversations, especially during travels. This tool records a speaker's words, transcribes them into text, translates that text into another language, and then displays the translated transcription for the other participant. This entire process is powered by OpenAI's API, ensuring high accuracy and efficient translation.
+Travel Translator is a multi-language transcription and translation web application. The application allows users to record audio and transcribes the audio into the text of a selected language. Then, it translates the transcribed text into another selected language and returns an audio output of the translated text. This entire process is powered by OpenAI's API, ensuring high accuracy and efficient translation.
 
-## Features
+![Demo](static/img/demo.png)
 
-- Real-time transcription and translation
-- Seamless and easy-to-use interface
-- Powered by OpenAI's API for high-quality translations
+## Demo
 
-## Requirements
+To see the Travel-Translator in action, please visit the live demo [here](https://lfontaine.pythonanywhere.com/). This demo is hosted on PythonAnywhere, an online platform that supports Python web applications. Try recording your own voice and see how efficiently and accurately it transcribes and translates your words. This tool can greatly assist you during your travels or in any cross-language conversation scenario. Please contact me by email to get access to the demo. Happy Travels and Translations!
 
-- Python 3.9 or higher
-- OpenAI API Key
+## Table of Contents
+
+1. [Getting Started](#getting-started)
+2. [Built With](#built-with)
+3. [How to Use](#how-to-use)
+4. [Contribute](#contribute)
+5. [License](#license)
+6: [Contact](#contact)
 
 ## Getting Started
 
-Follow the instructions below to run the Travel-Translator app:
+Follow the steps below to set up the project locally.
 
-1. **Clone the repository**
+### Prerequisites
 
-    Start by cloning the repository to your local machine.
+You need to have Python and pip installed on your machine. You can download Python from here: https://www.python.org/downloads/.
 
-    ```bash
-    git clone https://github.com/username/travel-translator.git
-    cd travel-translator
+### Installation
+
+1. Clone this repository:
+
+    ```
+    git clone https://github.com/Daugit/travel-translator.git
     ```
 
-2. **Install Python 3.9**
+2. Install the required packages:
 
-    The application requires Python 3.9 to run. If you haven't installed it yet, please do so by following the official Python installation guide.
-
-3. **Set up a virtual environment (Optional)**
-
-    It is recommended to set up a virtual environment to keep the application's dependencies isolated from your system.
-
-    ```bash
-    python3 -m venv venv
-    source venv/bin/activate
     ```
-
-4. **Install the required packages**
-
-    Use pip to install the necessary packages from the provided `requirements.txt` file.
-
-    ```bash
     pip install -r requirements.txt
     ```
 
-5. **Configure the OpenAI API Key**
+3. Start the Flask server:
 
-    Create a `config.ini` file at the root of the project. Enter your OpenAI API Key in the following format:
-
-    ```ini
-    [OPENAI_API]
-    key = <your-key>
     ```
-
-    Make sure to replace `<your-key>` with your actual OpenAI API Key.
-
-6. **Run the application**
-
-    Finally, start the application by running the `flask_app.py` script.
-
-    ```bash
     python flask_app.py
     ```
 
-    Now, open your browser and navigate to `http://localhost:5009` to start using Travel-Translator.
+4. Navigate to http://localhost:5009 in your web browser.
 
-## Contributing
+## Built With
 
-Feel free to fork the project, make a pull request, or suggest improvements by creating an issue. All contributions are welcome!
+- HTML
+- CSS
+- JavaScript
+- Python
+- Flask
+- OpenAI API
+- Google Text-to-Speech API
+
+## How to Use
+
+1. Select the input language - this is the language of your audio input.
+
+2. Select the output language - this is the language into which you want the audio input to be translated.
+
+3. Click the "Start" button to start recording your voice. The button will change to "Stop".
+
+4. Speak into your device's microphone in the selected input language.
+
+5. Click the "Stop" button to stop recording. The application will transcribe the audio, translate it to the selected output language, and provide the translation as text and audio.
+
+6. To swap the input and output languages, click on the arrow between the language selectors.
+
+## Contribute
+
+Contributions are always welcome! Thanks !
 
 ## License
 
-This project is licensed under the MIT License. For more details, please see the `LICENSE` file in the project repository.
+This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
 
-Happy Travels and Translations!
+## Contact
+
+For any inquiries, feedback, or suggestions, please feel free to reach out to me. I am always eager to discuss this project, potential improvements, or any other topics of interest. You can contact me directly via email at [lf94777@gmail.com](mailto:lf94777@gmail.com). I look forward to hearing from you and working together to improve and expand this tool's capabilities!
