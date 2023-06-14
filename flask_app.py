@@ -56,11 +56,21 @@ def translate_audio():
     
     # Instantiate gTTS with the translation and the target language
     tts = gTTS(translation, lang=output_language)
-
-    # Save audio file
-    filename = "audio.mp3"
-    tts.save("static/audio/" + filename)
     
+    filename = "audio.mp3"
+    file_path = "static/audio/" + filename
+    
+    # Remove audio file if exists
+    if os.path.exists(file_path):
+            os.remove(file_path)
+            
+    # Save audio file
+    tts.save(file_path)
+    
+    # Wait for the file to be saved
+    while not os.path.exists(file_path):
+        time.sleep(0.1)  # Sleep for a short duration before checking again
+        
     return jsonify({'audio_url': url_for('static', filename='audio/' + filename), 'translation': translation})
 
 

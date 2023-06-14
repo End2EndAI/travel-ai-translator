@@ -69,16 +69,28 @@ async function toggleRecording() {
 
                 // Create a new audio object and play it
                 let audio = new Audio(data['audio_url'] + "?t=" + new Date().getTime());
+
+                // Set audio preload and source
+                audio.preload = 'auto';
+                audio.src = data['audio_url'];
+
                 // Add an event listener for the 'canplaythrough' event
                 audio.addEventListener('canplaythrough', function() {
                     // The audio file can be played to the end without interruption,
                     // so start playing it
                     audio.play();
                 }, false);
+
+                // Add an event listener for the 'ended' event to handle playback completion
+                audio.addEventListener('ended', function() {
+                    console.log('Audio playback completed.');
+                }, false);
             })
             .catch(error => console.error('Error:', error));
     }
 }
+
+// Animation of the arrow when clicked
 
 var arrow_image = document.getElementById('arrow');
 
@@ -97,7 +109,7 @@ document.getElementById('arrow').addEventListener('click', function() {
     }, 300);
 });
 
-//change font of the language selection
+//Change font of the selected language 
 
 var selectElementOutput = document.getElementById("inputLanguage");
 
