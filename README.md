@@ -15,7 +15,7 @@ To see the Travel AI Translator in action, please visit the live demo [here](htt
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
-2. [Prerequisites](#prerequesites)
+2. [Prerequisites](#prerequisites)
 3. [Installation](#installation)
 4. [Built With](#built-with)
 5. [Supported languages](#supported-languages)
