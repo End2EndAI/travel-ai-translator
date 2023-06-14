@@ -1,6 +1,6 @@
-# Travel Translator
+# Travel AI Translator
 
-Travel Translator is a multi-language transcription and translation web application. The application allows users to record audio and transcribes the audio into the text of a selected language. Then, it translates the transcribed text into another selected language and returns an audio output of the translated text. This entire process is powered by OpenAI's API, ensuring high accuracy and efficient translation.
+Travel AI Translator is a multi-language transcription and translation web application. The application allows users to record audio and transcribes the audio into the text of a selected language. Then, it translates the transcribed text into another selected language and returns an audio output of the translated text. This entire process is powered by OpenAI's API, ensuring high accuracy and efficient translation.
 
 </br>
 
@@ -10,7 +10,7 @@ Travel Translator is a multi-language transcription and translation web applicat
 
 ## Demo
 
-To see the Travel-Translator in action, please visit the live demo [here](https://lfontaine.pythonanywhere.com/). This demo is hosted on PythonAnywhere, an online platform that supports Python web applications. Try recording your own voice and see how efficiently and accurately it transcribes and translates your words. This tool can greatly assist you during your travels or in any cross-language conversation scenario. Please contact me by email to get access to the demo. Happy Travels and Translations!
+To see the Travel AI Translator in action, please visit the live demo [here](https://lfontaine.pythonanywhere.com/). This demo is hosted on PythonAnywhere, an online platform that supports Python web applications. Try recording your own voice and see how efficiently and accurately it transcribes and translates your words. This tool can greatly assist you during your travels or in any cross-language conversation scenario. Please contact me by email to get access to the demo. Happy Travels and Translations!
 
 ## Table of Contents
 
