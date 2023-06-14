@@ -161,3 +161,4 @@ cython_debug/
 
 *.wav
 *.mp3
+*.ini

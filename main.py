@@ -1,12 +1,16 @@
 import os
 import time
+import configparser
 from werkzeug.utils import secure_filename
 
 from flask import Flask, request, render_template, jsonify
 
 import openai
 
-openai.api_key = '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'
+config = configparser.ConfigParser()
+config.read('config.ini')
+
+openai.api_key = config.get('OPENAI_API', 'key')
 
 
 app = Flask(__name__)
