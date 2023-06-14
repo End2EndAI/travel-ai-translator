@@ -5,7 +5,6 @@ body {
     display: flex;
     align-items: center;
     justify-content: center;
-    height: 100vh;
     margin: 0;
     padding: 0;
     box-sizing: border-box;
@@ -15,19 +14,24 @@ body {
     background-color: rgba(0,0,0,0.6);
     padding: 20px;
     border-radius: 25px;
-    max-width: 30%;
     box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
     height: 100vh;
-    width: 50%;
+    width: 70vh;
+}
+
+.app-name, .action-container, #transcriptContainer, #translationContainer {
+    height: 20%;
+    width: 80%;
 }
 
 h1 {
     font-size: 2em;
     margin-bottom: 0px;
+    text-align: center;
 }
 
 #recordButton {
@@ -40,6 +44,12 @@ h1 {
     cursor: pointer;
     transition: background-color 0.3s;
     margin-bottom: 20px;
+}
+
+.button-container{
+    display: flex;
+    justify-content: center;
+    align-items: center;
 }
 
 #recordButton:active {
@@ -70,7 +80,7 @@ h1 {
     font-size: 1em;
     text-align: center;
     width: 100%;
-    font-family: 'Roboto', sans-serif;   
+    font-family: 'Roboto', sans-serif;
     word-wrap: break-word;
 }
 
@@ -79,7 +89,7 @@ h1 {
     font-size: 1em;
     text-align: center;
     width: 100%;
-    font-family: 'Roboto', sans-serif;   
+    font-family: 'Roboto', sans-serif;
     word-wrap: break-word;
 }
 
@@ -89,7 +99,7 @@ h1 {
     align-items: center;
     justify-content: space-between;
     width: 100%;
-    margin-bottom: 0px;
+    margin-bottom: 20px;
 }
 
 .lang-selector {
@@ -112,10 +122,51 @@ h1 {
 #arrow{
     width: 30px;
     height: 30px;
-    transition: transform 0.3s ease; 
+    transition: transform 0.3s ease;
 }
 
 #arrow.clicked {
     transform: scale(1.2); /* Increase size by 20% */
 }
 
+/* Then, add a media query for smaller screens like mobile devices */
+
+@media (max-width: 768px) {
+    html, body {
+        height: 100%;
+    }
+
+    .app-container {
+        gap: 0%; /* Replace fixed gap with relative */
+        width: 100%; /* Change to percentage */
+        max-height: 100%;
+    }
+
+    .action-container {
+        height: 20%;
+        width: 80%; /* Change to percentage */
+        margin-bottom: 2%;
+    }
+
+    #transcriptContainer, #translationContainer {
+        width: 95%; /* Change to percentage */
+        margin-bottom: 2%;
+    }
+    .app-name{
+        height: 10%;
+        width: 80%; /* Change to percentage */
+        margin-bottom: 5%;
+    }
+    .lang-selector {
+        width: 45%; /* Adjust the width of the language selector */
+        font-size: 12px; /* Adjust the font size */
+    }
+
+    #recordButton {
+        margin-bottom: 2%;
+    }
+
+    #arrow, #inputLanguage {
+        margin-right: 2%;
+    }
+}
