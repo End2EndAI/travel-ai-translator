@@ -1,15 +1,16 @@
 <!DOCTYPE html>
-<html>
+<html lang="en">
 <head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Travel Translator</title>
     <link href="https://fonts.googleapis.com/css2?family=Roboto:wght@400;700&display=swap" rel="stylesheet">
-    <link rel="stylesheet" type="text/css" href="{{ url_for('static', filename='css/styles.css') }}">
-    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
-    <div class="app-container">
+    <main class="app-container">
         <h1 class='app-name'>Travel Translator</h1>
-        <div class="action-container">
+        <section class="action-container">
             <div class="lang-container">
                 <select id="inputLanguage" class="lang-selector">
                     <option value="fr" class="selected-input-font">French</option>
@@ -132,19 +133,19 @@
             <div class="button-container">
                 <button id="recordButton" onclick="toggleRecording()">Start</button>
             </div>
-        </div>
-        <div id="transcriptContainer">
+        </section>
+        <section id="transcriptContainer">
             <h2 id="transcriptText">Transcript</h2>
             <div id="transcript"></div>
-        </div>
-        <div id="translationContainer">
+        </section>
+        <section id="translationContainer">
             <h2 id="translationText">Translation</h2>
             <div id="translation"></div>
-        </div>
+        </section>
         <div class="button-container">
-            <button id="audioButton" onclick="toggleAudio()">Hear again</button>
+            <button id="audioButton" onclick="fetchAndPlayAudio()">Hear again</button>
         </div>
-    </div>
+    </main>
 
     <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>

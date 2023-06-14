@@ -1,154 +1,165 @@
+// Get references to HTML elements
+const recordButton = document.getElementById('recordButton');
+const translation = document.getElementById('translation');
+const transcript = document.getElementById('transcript');
+const inputLanguage = document.getElementById('inputLanguage');
+const outputLanguage = document.getElementById('outputLanguage');
+const arrowImage = document.getElementById('arrow');
+
+// Variables to control recording state and audio data
 let isRecording = false;
 let mediaRecorder;
 let audioChunks = [];
 let stream;
 
-async function toggleRecording() {
-    const recordButton = document.getElementById('recordButton');
-    const translation = document.getElementById('translation');
-    const transcript = document.getElementById('transcript');
+// Start recording audio
+async function startRecording() {
+    isRecording = true;
+    recordButton.textContent = 'Stop';
+    translation.textContent = '';
+    transcript.textContent = '';
 
-    if (!isRecording) {
-        isRecording = true;
-        recordButton.textContent = 'Stop';
-        translation.textContent = '';
-        transcript.textContent = '';
+    // Get user media (audio) stream
+    stream = await navigator.mediaDevices.getUserMedia({ audio: true });
+    mediaRecorder = new MediaRecorder(stream);
 
-        stream = await navigator.mediaDevices.getUserMedia({ audio: true });
-        mediaRecorder = new MediaRecorder(stream);
-        mediaRecorder.addEventListener('dataavailable', event => {
-            audioChunks.push(event.data);
-        });
+    // Collect audio data chunks
+    mediaRecorder.addEventListener('dataavailable', event => {
+        audioChunks.push(event.data);
+    });
 
-        mediaRecorder.start();
+    // Start recording
+    mediaRecorder.start();
+}
 
-    } else {
-        recordButton.textContent = 'Start';
+// Stop recording audio and process the recorded data
+async function stopRecording() {
+    recordButton.textContent = 'Start';
 
-        // Create a Promise that resolves when the 'stop' event is fired
-        const stopPromise = new Promise(resolve => mediaRecorder.addEventListener('stop', resolve));
+    // Wait for the 'stop' event to resolve
+    const stopPromise = new Promise(resolve => mediaRecorder.addEventListener('stop', resolve));
 
-        mediaRecorder.stop();
+    // Stop recording and release the media stream
+    mediaRecorder.stop();
+    stream.getTracks().forEach(track => track.stop());
+    await stopPromise;
 
-        // Stop the media stream
-        stream.getTracks().forEach(track => track.stop());
+    isRecording = false;
 
-        // Wait for the 'stop' event to be fired
-        await stopPromise;
+    // Create a Blob object from the collected audio data
+    const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+    audioChunks.length = 0;
 
-        isRecording = false;
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
-        audioChunks.length = 0; // Clear the audioChunks array
+    // Send the audio data to the server for transcription
+    sendAudioToServer(audioBlob);
+}
 
+// Send the audio data to the server for transcription
+async function sendAudioToServer(audioBlob) {
+    let formData = new FormData();
+    formData.append('audio', audioBlob);
+    formData.append('input_language', inputLanguage.value);
 
-        // send audioBlob to server and get translation
-        let formData = new FormData();
-        formData.append('audio', audioBlob);
-        formData.append('input_language', document.getElementById('inputLanguage').value);
-
-        fetch('/transcribe', {
+    try {
+        // Make a POST request to transcribe the audio
+        let transcription = await fetch('/transcribe', {
             method: 'POST',
             body: formData,
-        })
-        .then(response => response.json())
-        .then(data => {
-            transcript.textContent = data.transcript;
+        }).then(response => response.json());
 
-            // Now make the request for translation
-            return fetch('/translate', {
-                method: 'POST',
-                headers: {
-                    'Content-Type': 'application/json',
-                },
-                body: JSON.stringify({ text: data.transcript, input_language: document.getElementById('inputLanguage').value, output_language: document.getElementById('outputLanguage').value }),
-            });
-        })
-        .then(response => response.json())
-        .then(data => {
-            translation.textContent = data.translation;
+        // Display the transcription
+        transcript.textContent = transcription.transcript;
 
-            // Create a new audio object and play it
-            console.log(data['audio_url'] + "?t=" + new Date().getTime());
-            let audio = new Audio(data['audio_url'] + "?t=" + new Date().getTime());
-
-            // Add an event listener for the 'canplaythrough' event
-            audio.addEventListener('canplaythrough', function() {
-                // The audio file can be played to the end without interruption,
-                // so start playing it
-                audio.play();
-            }, false);
-        })
-        .catch(error => console.error('Error:', error));
+        // Translate the transcription
+        await translateTranscript(transcription.transcript);
+    } catch (error) {
+        console.error('Error:', error);
     }
 }
 
-function toggleAudio() {
-    fetch('/audio', {
-        method: 'GET'
-    })
-    .then(response => response.json())
-    .then(data => {
-        // Create a new audio object and play it
-        let audio = new Audio(data['audio_url'] + "?t=" + new Date().getTime());
+// Translate the transcription
+async function translateTranscript(transcriptText) {
+    try {
+        // Make a POST request to translate the text
+        let data = await fetch('/translate', {
+            method: 'POST',
+            headers: { 'Content-Type': 'application/json' },
+            body: JSON.stringify({
+                text: transcriptText,
+                input_language: inputLanguage.value,
+                output_language: outputLanguage.value
+            }),
+        }).then(response => response.json());
 
-        // Add an event listener for the 'canplaythrough' event
-        audio.addEventListener('canplaythrough', function() {
-            // The audio file can be played to the end without interruption,
-            // so start playing it
-            audio.play();
-        }, false);
-    })
-    .catch(error => console.error('Error:', error));
+        // Display the translation
+        translation.textContent = data.translation;
+
+        // Play the translated audio
+        playAudio(data['audio_url']);
+    } catch (error) {
+        console.error('Error:', error);
+    }
 }
 
-// Animation of the arrow when clicked
+// Play audio from the provided URL
+function playAudio(url) {
+    let audio = new Audio(url + "?t=" + new Date().getTime());
 
-var arrow_image = document.getElementById('arrow');
+    // Play the audio when it's ready
+    audio.addEventListener('canplaythrough', function () {
+        audio.play();
+    }, false);
+}
 
-document.getElementById('arrow').addEventListener('click', function() {
-    var inputLangSelect = document.getElementById('inputLanguage');
-    var outputLangSelect = document.getElementById('outputLanguage');
-    
-    var temp = inputLangSelect.value;
-    inputLangSelect.value = outputLangSelect.value;
-    outputLangSelect.value = temp;
+// Toggle recording based on the current state
+async function toggleRecording() {
+    if (!isRecording) {
+        await startRecording();
+    } else {
+        await stopRecording();
+    }
+}
 
-    // Apply animation
-    arrow_image.classList.add('clicked');
-    setTimeout(function() {
-        arrow_image.classList.remove('clicked');
-    }, 300);
+// Fetch and play audio from the server
+async function fetchAndPlayAudio() {
+    try {
+        const data = await fetch('/audio', { method: 'GET' }).then(response => response.json());
+
+        // Play the fetched audio
+        playAudio(data['audio_url']);
+    } catch (error) {
+        console.error('Error:', error);
+    }
+}
+
+// Swap selected input and output languages
+arrowImage.addEventListener('click', function () {
+    // Swap the values of inputLanguage and outputLanguage
+    [inputLanguage.value, outputLanguage.value] = [outputLanguage.value, inputLanguage.value];
+
+    // Add a 'clicked' class to animate the arrow
+    arrowImage.classList.add('clicked');
+
+    // Remove the 'clicked' class after a short delay
+    setTimeout(() => arrowImage.classList.remove('clicked'), 300);
 });
 
-//Change font of the selected language 
+// Change the font class when the input language changes
+inputLanguage.addEventListener("change", changeFontClass("selected-input-font"));
 
-var selectElementOutput = document.getElementById("inputLanguage");
+// Change the font class when the output language changes
+outputLanguage.addEventListener("change", changeFontClass("selected-output-font"));
 
-selectElementOutput.addEventListener("change", function() {
-  var selectedOption = this.options[this.selectedIndex];
+// Change the font class of the selected option
+function changeFontClass(className) {
+    return function () {
+        let selectedOption = this.options[this.selectedIndex];
 
-  // Remove the class from any previously selected option
-  var prevSelectedOption = document.querySelector(".selected-input-font");
-  if (prevSelectedOption) {
-    prevSelectedOption.classList.remove("selected-input-font");
-  }
+        let prevSelectedOption = document.querySelector(`.${className}`);
+        if (prevSelectedOption) {
+            prevSelectedOption.classList.remove(className);
+        }
 
-  // Add the class to the newly selected option
-  selectedOption.classList.add("selected-input-font");
-});
-
-var selectElementInput = document.getElementById("outputLanguage");
-
-selectElementInput.addEventListener("change", function() {
-  var selectedOption = this.options[this.selectedIndex];
-
-  // Remove the class from any previously selected option
-  var prevSelectedOption = document.querySelector(".selected-output-font");
-  if (prevSelectedOption) {
-    prevSelectedOption.classList.remove("selected-output-font");
-  }
-
-  // Add the class to the newly selected option
-  selectedOption.classList.add("selected-output-font");
-});
-
+        selectedOption.classList.add(className);
+    };
+}

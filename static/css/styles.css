@@ -1,3 +1,4 @@
+/* Basic setup for body */
 body {
     background-color: #87CEFA; /* Light sky blue color */
     color: white;
@@ -10,17 +11,28 @@ body {
     box-sizing: border-box;
 }
 
+h1 {
+    font-size: 2em;
+    margin-bottom: 0px;
+    text-align: center;
+}
+
+.option {
+    text-align: left;
+}
+
+/* App container */
 .app-container {
     background-color: rgba(0,0,0,0.6);
     padding: 20px;
     border-radius: 25px;
-    box-sizing: border-box;
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
     height: 100vh;
     width: 70vh;
+    box-sizing: border-box;
 }
 
 .app-name, .action-container, #transcriptContainer, #translationContainer {
@@ -28,12 +40,7 @@ body {
     width: 80%;
 }
 
-h1 {
-    font-size: 2em;
-    margin-bottom: 0px;
-    text-align: center;
-}
-
+/* Buttons */
 #recordButton, #audioButton {
     padding: 10px 20px;
     background-color: #FF6347;
@@ -46,17 +53,18 @@ h1 {
     margin-bottom: 20px;
 }
 
-.button-container{
+#recordButton:active, #audioButton:active {
+    background-color: #FF4500;
+}
+
+/* Button container */
+.button-container {
     display: flex;
     justify-content: center;
     align-items: center;
 }
 
-#recordButton:active, #audioButton:active {
-    background-color: #FF4500;
-}
-
-/* Add styling for the transcript container */
+/* Containers for transcript and translation */
 #transcriptContainer, #translationContainer {
     background-color: rgba(255,255,255,0.8);
     border-radius: 20px;
@@ -75,7 +83,8 @@ h1 {
     overflow-y: auto;
 }
 
-#transcript, #translation {
+/* Text for transcript and translation */
+#transcript, #translation, #transcriptText, #translationText {
     color: black;
     font-size: 1em;
     text-align: center;
@@ -84,20 +93,7 @@ h1 {
     word-wrap: break-word;
 }
 
-option {
-    text-align: left;
-}
-
-#transcriptText, #translationText {
-    color: black;
-    font-size: 1em;
-    text-align: center;
-    width: 100%;
-    font-family: 'Roboto', sans-serif;
-    word-wrap: break-word;
-}
-
-/* Add styling for the language selectors */
+/* Language selectors */
 .lang-container {
     display: flex;
     align-items: center;
@@ -121,17 +117,19 @@ option {
     font-weight: bold;
 }
 
+/* This is for Firefox */
+.lang-selector::-moz-focus-inner {
+    border: 0;
+}
+
+/* Font styling */
 .selected-input-font, .selected-output-font {
     font-family: 'Roboto', sans-serif;
     color: black;
     font-weight: bold;
 }
 
-/* This is for Firefox */
-.lang-selector::-moz-focus-inner {
-    border: 0;
-}
-
+/* Arrow styling */
 #arrow{
     width: 30px;
     height: 30px;
@@ -142,8 +140,7 @@ option {
     transform: scale(1.2); /* Increase size by 20% */
 }
 
-/* Then, add a media query for smaller screens like mobile devices */
-
+/* Media queries for responsive design */
 @media (max-width: 768px) {
     html, body {
         height: 100%;
@@ -155,21 +152,16 @@ option {
         max-height: 100%;
     }
 
-    .action-container {
-        height: 20%;
+    .action-container, .app-name, #transcriptContainer, #translationContainer {
         width: 80%; /* Change to percentage */
         margin-bottom: 2%;
     }
 
-    #transcriptContainer, #translationContainer {
-        width: 95%; /* Change to percentage */
-        margin-bottom: 2%;
-    }
     .app-name{
         height: 10%;
-        width: 80%; /* Change to percentage */
         margin-bottom: 5%;
     }
+    
     .lang-selector {
         width: 45%; /* Adjust the width of the language selector */
         font-size: 12px; /* Adjust the font size */

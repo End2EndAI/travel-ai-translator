@@ -3,104 +3,106 @@ import time
 from datetime import datetime
 import configparser
 from werkzeug.utils import secure_filename
-from flask import Flask, request, render_template, jsonify, url_for
+from flask import Flask, request, render_template, jsonify, url_for, session
 import openai
 from gtts import gTTS
+import secrets
 
+# Loading OpenAI API key from configuration file
 config = configparser.ConfigParser()
 config.read('config.ini')
-
 openai.api_key = config.get('OPENAI_API', 'key')
 
-
+# Initializing Flask app
 app = Flask(__name__)
-app.config['UPLOAD_FOLDER'] = "./"  # set your upload folder path here
-
-CURRENT_AUDIO_FILE_PATH = None
+# Setting up paths for upload and audio directories
+app.config['UPLOAD_FOLDER'] = "./"  
+app.config['AUDIO_FOLDER'] = "static/audio/"
+# Generating a secret key for the session
+app.config['SECRET_KEY'] = secrets.token_hex(16)
 
 @app.route('/')
 def index():
+    # Serving the initial index page
     return render_template('index.html')
-
 
 @app.route('/transcribe', methods=['POST'])
 def transcribe_audio():
+    # Transcribing uploaded audio file
     if 'audio' not in request.files:
         return jsonify({'error': 'No audio file provided'}), 400
 
-    file = request.files['audio']
-    filename = secure_filename(file.filename)
-    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename + '.wav')
+    # Securing the filename and saving it in the defined upload directory
+    audio_file = request.files['audio']
+    filename = f"{secure_filename(audio_file.filename)}.wav"
+    file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
+    audio_file.save(file_path)
 
-    if os.path.exists(file_path):
-        os.remove(file_path)
+    # Waiting for the file to be completely written to the disk
+    wait_for_file(file_path)
 
-    file.save(file_path)
-
-    # Wait for the file to be saved
-    while not os.path.exists(file_path) or not os.path.getsize(file_path) > 0:
-        time.sleep(0.1)  # Sleep for a short duration before checking again
-
+    # Transcribing the audio file using OpenAI's whisper model
     input_language = request.form['input_language']
-    
     transcript = transcribe(file_path, input_language)
     
     return jsonify({'transcript': transcript})
 
-
 @app.route('/translate', methods=['POST'])
 def translate_audio():
-    transcript = request.get_json()['text']
-    input_language = request.get_json()['input_language']
-    output_language = request.get_json()['output_language']
-    
-    # set your target language here
-    translation = translate(transcript, input_language=input_language, output_language=output_language)
-    
-    # Instantiate gTTS with the translation and the target language
-    tts = gTTS(translation, lang=output_language)
-    
-    # Generate a unique filename by appending a timestamp
+    # Translating provided text and converting it into speech
+    req_data = request.get_json()
+
+    # Translating the text
+    translation = translate(
+        req_data['text'], 
+        input_language=req_data['input_language'], 
+        output_language=req_data['output_language']
+    )
+
+    # Converting the translated text into speech
+    tts = gTTS(translation, lang=req_data['output_language'])
+
+    # Saving the speech file to the audio directory
     timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = "audio_" + timestamp + ".mp3"
-    file_path = "static/audio/" + filename
-    
-    global CURRENT_AUDIO_FILE_PATH
-    
-    # Remove audio file if exists
-    if not CURRENT_AUDIO_FILE_PATH == None:
-        os.remove(CURRENT_AUDIO_FILE_PATH)
-    
-    # Assign the new audio file path    
-    CURRENT_AUDIO_FILE_PATH = file_path
-            
-    # Save audio file
+    filename = f"audio_{timestamp}.mp3"
+    file_path = os.path.join(app.config['AUDIO_FOLDER'], filename)
     tts.save(file_path)
-    
-    # Wait for the file to be saved
-    while not os.path.exists(file_path) or not os.path.getsize(file_path) > 0:
-        time.sleep(0.1)  # Sleep for a short duration before checking again
+
+    wait_for_file(file_path)
+
+    # Storing the path of the last audio file in the session
+    session['last_audio_file'] = file_path
         
-    return jsonify({'audio_url': url_for('static', filename='audio/' + filename), 'translation': translation})
+    return jsonify({
+        'audio_url': url_for('static', filename=f'audio/{filename}'), 
+        'translation': translation
+    })
 
 @app.route('/audio', methods=['GET'])
 def get_last_audio():         
-    return jsonify({'audio_url': CURRENT_AUDIO_FILE_PATH })
+    # Returning the path of the last audio file from the session
+    return jsonify({'audio_url': session.get('last_audio_file', '') })
 
 def transcribe(file_path, input_language):
-    audio_file = open(file_path, "rb")
-
-    transcript = openai.Audio.transcribe(
-        "whisper-1", audio_file, language=input_language)
-
+    # Transcribing audio using OpenAI's whisper model
+    with open(file_path, "rb") as audio_file:
+        transcript = openai.Audio.transcribe(
+            "whisper-1", audio_file, language=input_language
+        )
     return transcript['text']
 
-
 def translate(text, input_language, output_language):
+    # Translating text using OpenAI's gpt-3.5-turbo model
     messages = [
-        {"role": "system", "content": f"You are a helpful translator. \
-        You will receive a transcribe in '{input_language}', and you have to translate in '{output_language}'. \
-        The translation should be in spoken language. Only reply with the translation, without pronountiation or pinyin or quotes."},
+        {
+            "role": "system", 
+            "content": (
+                f"You are a helpful translator. You will receive a transcribe in "
+                f"'{input_language}', and you have to translate in '{output_language}'. "
+                "The translation should be in spoken language. Only reply with the "
+                "translation, without pronountiation or pinyin or quotes."
+            )
+        },
         {"role": "user", "content": f"Transcribe : {text}; Translation : "}
     ]
     
@@ -110,6 +112,12 @@ def translate(text, input_language, output_language):
     )
     
     return translation['choices'][0]['message']['content']
-    
+
+def wait_for_file(file_path):
+    # Wait for file to exist and to be non-empty before proceeding
+    while not os.path.exists(file_path) or not os.path.getsize(file_path) > 0:
+        time.sleep(0.1)
+
+# Run the Flask app
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5009)
