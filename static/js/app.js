@@ -66,6 +66,15 @@ async function toggleRecording() {
             .then(response => response.json())
             .then(data => {
                 translation.textContent = data.translation;
+
+                // Create a new audio object and play it
+                let audio = new Audio(data['audio_url'] + "?t=" + new Date().getTime());
+                // Add an event listener for the 'canplaythrough' event
+                audio.addEventListener('canplaythrough', function() {
+                    // The audio file can be played to the end without interruption,
+                    // so start playing it
+                    audio.play();
+                }, false);
             })
             .catch(error => console.error('Error:', error));
     }
@@ -87,3 +96,36 @@ document.getElementById('arrow').addEventListener('click', function() {
         arrow_image.classList.remove('clicked');
     }, 300);
 });
+
+//change font of the language selection
+
+var selectElementOutput = document.getElementById("inputLanguage");
+
+selectElementOutput.addEventListener("change", function() {
+  var selectedOption = this.options[this.selectedIndex];
+
+  // Remove the class from any previously selected option
+  var prevSelectedOption = document.querySelector(".selected-input-font");
+  if (prevSelectedOption) {
+    prevSelectedOption.classList.remove("selected-input-font");
+  }
+
+  // Add the class to the newly selected option
+  selectedOption.classList.add("selected-input-font");
+});
+
+var selectElementInput = document.getElementById("outputLanguage");
+
+selectElementInput.addEventListener("change", function() {
+  var selectedOption = this.options[this.selectedIndex];
+
+  // Remove the class from any previously selected option
+  var prevSelectedOption = document.querySelector(".selected-output-font");
+  if (prevSelectedOption) {
+    prevSelectedOption.classList.remove("selected-output-font");
+  }
+
+  // Add the class to the newly selected option
+  selectedOption.classList.add("selected-output-font");
+});
+

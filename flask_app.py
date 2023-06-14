@@ -2,10 +2,9 @@ import os
 import time
 import configparser
 from werkzeug.utils import secure_filename
-
-from flask import Flask, request, render_template, jsonify
-
+from flask import Flask, request, render_template, jsonify, url_for
 import openai
+from gtts import gTTS
 
 config = configparser.ConfigParser()
 config.read('config.ini')
@@ -55,7 +54,14 @@ def translate_audio():
     # set your target language here
     translation = translate(transcript, input_language=input_language, output_language=output_language)
     
-    return jsonify({'translation': translation})
+    # Instantiate gTTS with the translation and the target language
+    tts = gTTS(translation, lang=output_language)
+
+    # Save audio file
+    filename = "audio.mp3"
+    tts.save("static/audio/" + filename)
+    
+    return jsonify({'audio_url': url_for('static', filename='audio/' + filename), 'translation': translation})
 
 
 def transcribe(file_path, input_language):
@@ -71,8 +77,7 @@ def translate(text, input_language, output_language):
     messages = [
         {"role": "system", "content": f"You are a helpful translator. \
         You will receive a transcribe in '{input_language}', and you have to translate in '{output_language}'. \
-        Take into account in the translation that the transcription may be incomplete or inaccurate. \
-        The translation should be in spoken language."},
+        The translation should be in spoken language. Only reply with the translation, without pronountiation or pinyin or quotes."},
         {"role": "user", "content": f"Transcribe : {text}; Translation : "}
     ]
     
@@ -80,8 +85,8 @@ def translate(text, input_language, output_language):
         model="gpt-3.5-turbo",
         messages=messages
     )
+    
     return translation['choices'][0]['message']['content']
-
-
+    
 if __name__ == '__main__':
     app.run(debug=True, host="0.0.0.0", port=5009)
