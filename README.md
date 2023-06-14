@@ -19,7 +19,7 @@ To see the Travel AI Translator in action, please visit the live demo [here](htt
 3. [How to Use](#how-to-use)
 4. [Contribute](#contribute)
 5. [License](#license)
-6: [Contact](#contact)
+6. [Contact](#contact)
 
 ## Getting Started
 
