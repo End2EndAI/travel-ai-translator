@@ -15,11 +15,14 @@ To see the Travel AI Translator in action, please visit the live demo [here](htt
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
-2. [Built With](#built-with)
-3. [How to Use](#how-to-use)
-4. [Contribute](#contribute)
-5. [License](#license)
-6. [Contact](#contact)
+2. [Prerequisites](#prerequesites)
+3. [Installation](#installation)
+4. [Built With](#built-with)
+5. [Supported languages](#supported-languages)
+6. [How to Use](#how-to-use)
+7. [Contribute](#contribute)
+8. [License](#license)
+9. [Contact](#contact)
 
 ## Getting Started
 
@@ -74,6 +77,7 @@ You also need an API key for OpenAI API.
 - Google Text-to-Speech API
 
 ## Supported languages
+
 Our project proudly supports a vast number of languages to cater to a global audience. The currently supported languages include:
 
 Afrikaans, Arabic, Armenian, Azerbaijani, Belarusian, Bosnian, Bulgarian, Catalan, Chinese, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Greek, Hebrew, Hindi, Hungarian, Icelandic, Indonesian, Italian, Japanese, Kannada, Kazakh, Korean, Latvian, Lithuanian, Macedonian, Malay, Marathi, Maori, Nepali, Norwegian, Persian, Polish, Portuguese, Romanian, Russian, Serbian, Slovak, Slovenian, Spanish, Swahili, Swedish, Tagalog, Tamil, Thai, Turkish, Ukrainian, Urdu, Vietnamese, and Welsh.
