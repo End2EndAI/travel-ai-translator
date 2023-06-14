@@ -34,7 +34,7 @@ h1 {
     text-align: center;
 }
 
-#recordButton {
+#recordButton, #audioButton {
     padding: 10px 20px;
     background-color: #FF6347;
     border: none;
@@ -52,7 +52,7 @@ h1 {
     align-items: center;
 }
 
-#recordButton:active {
+#recordButton:active, #audioButton:active {
     background-color: #FF4500;
 }
 

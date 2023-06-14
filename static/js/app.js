@@ -50,44 +50,55 @@ async function toggleRecording() {
             method: 'POST',
             body: formData,
         })
-            .then(response => response.json())
-            .then(data => {
-                transcript.textContent = data.transcript;
+        .then(response => response.json())
+        .then(data => {
+            transcript.textContent = data.transcript;
 
-                // Now make the request for translation
-                return fetch('/translate', {
-                    method: 'POST',
-                    headers: {
-                        'Content-Type': 'application/json',
-                    },
-                    body: JSON.stringify({ text: data.transcript, input_language: document.getElementById('inputLanguage').value, output_language: document.getElementById('outputLanguage').value }),
-                });
-            })
-            .then(response => response.json())
-            .then(data => {
-                translation.textContent = data.translation;
+            // Now make the request for translation
+            return fetch('/translate', {
+                method: 'POST',
+                headers: {
+                    'Content-Type': 'application/json',
+                },
+                body: JSON.stringify({ text: data.transcript, input_language: document.getElementById('inputLanguage').value, output_language: document.getElementById('outputLanguage').value }),
+            });
+        })
+        .then(response => response.json())
+        .then(data => {
+            translation.textContent = data.translation;
 
-                // Create a new audio object and play it
-                let audio = new Audio(data['audio_url'] + "?t=" + new Date().getTime());
+            // Create a new audio object and play it
+            console.log(data['audio_url'] + "?t=" + new Date().getTime());
+            let audio = new Audio(data['audio_url'] + "?t=" + new Date().getTime());
 
-                // Set audio preload and source
-                audio.preload = 'auto';
-                audio.src = data['audio_url'];
-
-                // Add an event listener for the 'canplaythrough' event
-                audio.addEventListener('canplaythrough', function() {
-                    // The audio file can be played to the end without interruption,
-                    // so start playing it
-                    audio.play();
-                }, false);
-
-                // Add an event listener for the 'ended' event to handle playback completion
-                audio.addEventListener('ended', function() {
-                    console.log('Audio playback completed.');
-                }, false);
-            })
-            .catch(error => console.error('Error:', error));
+            // Add an event listener for the 'canplaythrough' event
+            audio.addEventListener('canplaythrough', function() {
+                // The audio file can be played to the end without interruption,
+                // so start playing it
+                audio.play();
+            }, false);
+        })
+        .catch(error => console.error('Error:', error));
     }
+}
+
+function toggleAudio() {
+    fetch('/audio', {
+        method: 'GET'
+    })
+    .then(response => response.json())
+    .then(data => {
+        // Create a new audio object and play it
+        let audio = new Audio(data['audio_url'] + "?t=" + new Date().getTime());
+
+        // Add an event listener for the 'canplaythrough' event
+        audio.addEventListener('canplaythrough', function() {
+            // The audio file can be played to the end without interruption,
+            // so start playing it
+            audio.play();
+        }, false);
+    })
+    .catch(error => console.error('Error:', error));
 }
 
 // Animation of the arrow when clicked
