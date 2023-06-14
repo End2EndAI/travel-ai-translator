@@ -28,6 +28,7 @@ Follow the steps below to set up the project locally.
 ### Prerequisites
 
 You need to have Python and pip installed on your machine. You can download Python from here: https://www.python.org/downloads/.
+You also need an API key for OpenAI API.
 
 ### Installation
 
@@ -42,14 +43,25 @@ You need to have Python and pip installed on your machine. You can download Pyth
     ```
     pip install -r requirements.txt
     ```
+    
+3. **Configure the OpenAI API Key**
 
-3. Start the Flask server:
+    Create a `config.ini` file at the root of the project. Enter your OpenAI API Key in the following format:
+
+    ```ini
+    [OPENAI_API]
+    key = <your-key>
+    ```
+
+    Make sure to replace `<your-key>` with your actual OpenAI API Key.
+
+4. Start the Flask server:
 
     ```
     python flask_app.py
     ```
 
-4. Navigate to http://localhost:5009 in your web browser.
+5. Navigate to http://localhost:5009 in your web browser.
 
 ## Built With
 
