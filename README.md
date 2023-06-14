@@ -27,7 +27,7 @@ Follow the steps below to set up the project locally.
 
 ### Prerequisites
 
-You need to have Python and pip installed on your machine. You can download Python from here: https://www.python.org/downloads/.
+You need to have Python 3.9 and pip installed on your machine. You can download Python from here: https://www.python.org/downloads/.
 You also need an API key for OpenAI API.
 
 ### Installation
@@ -72,6 +72,11 @@ You also need an API key for OpenAI API.
 - Flask
 - OpenAI API
 - Google Text-to-Speech API
+
+## Supported languages
+Our project proudly supports a vast number of languages to cater to a global audience. The currently supported languages include:
+
+Afrikaans, Arabic, Armenian, Azerbaijani, Belarusian, Bosnian, Bulgarian, Catalan, Chinese, Croatian, Czech, Danish, Dutch, English, Estonian, Finnish, French, Galician, German, Greek, Hebrew, Hindi, Hungarian, Icelandic, Indonesian, Italian, Japanese, Kannada, Kazakh, Korean, Latvian, Lithuanian, Macedonian, Malay, Marathi, Maori, Nepali, Norwegian, Persian, Polish, Portuguese, Romanian, Russian, Serbian, Slovak, Slovenian, Spanish, Swahili, Swedish, Tagalog, Tamil, Thai, Turkish, Ukrainian, Urdu, Vietnamese, and Welsh.
 
 ## How to Use
 
