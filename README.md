@@ -2,8 +2,10 @@
 
 Travel Translator is a multi-language transcription and translation web application. The application allows users to record audio and transcribes the audio into the text of a selected language. Then, it translates the transcribed text into another selected language and returns an audio output of the translated text. This entire process is powered by OpenAI's API, ensuring high accuracy and efficient translation.
 
+</br>
+
 <div align="center">
-    <img src="static/img/demo.png" width="200" height="350" >
+    <img src="static/img/demo.png" width="250" height="350" >
 </div>
 
 ## Demo
