@@ -9,12 +9,6 @@ async function toggleRecording() {
     const transcript = document.getElementById('transcript');
 
     if (!isRecording) {
-
-        if (!navigator.mediaDevices || !navigator.mediaDevices.getUserMedia) {
-            translation.textContent = 'Your browser does not support recording.';
-            return;
-        }
-
         isRecording = true;
         recordButton.textContent = 'Stop Recording';
         translation.textContent = '';

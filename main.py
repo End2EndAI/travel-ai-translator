@@ -1,7 +1,6 @@
 import os
 import time
 from werkzeug.utils import secure_filename
-import soundfile as sf
 
 from flask import Flask, request, render_template, jsonify
 
@@ -72,8 +71,6 @@ def translate(text, input_language, output_language):
         The translation should be in spoken language."},
         {"role": "user", "content": f"Transcribe : {text}; Translation : "}
     ]
-
-    print(messages[0]['content'])
     
     translation = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
@@ -83,4 +80,4 @@ def translate(text, input_language, output_language):
 
 
 if __name__ == '__main__':
-    app.run(debug=True, host="0.0.0.0", port=5000)
+    app.run(debug=True, host="0.0.0.0", port=5009)
