@@ -13,6 +13,9 @@ config = configparser.ConfigParser()
 config.read('config.ini')
 openai.api_key = config.get('OPENAI_API', 'key')
 
+# Development mode, unable requests to OpenAI
+DEV_MODE = False
+
 # Initializing Flask app
 app = Flask(__name__)
 # Setting up paths for upload and audio directories
@@ -44,7 +47,10 @@ def transcribe_audio():
     # Transcribing the audio file using OpenAI's whisper model
     input_language = request.form['input_language']
     
-    transcript = transcribe(file_path, input_language)
+    if(DEV_MODE):
+        transcript = "This is DEV mode."
+    else:
+        transcript = transcribe(file_path, input_language)
     
     return jsonify({'transcript': transcript})
 
@@ -60,40 +66,53 @@ def translate_audio():
             'translation': "The output language cannot be set to 'auto'"
         })
         
-    # Translating the text
-    translation = translate(
-        req_data['text'], 
-        input_language=req_data['input_language'], 
-        output_language=req_data['output_language']
-    )
-
-    # Converting the translated text into speech
-    tts = gTTS(translation, lang=req_data['output_language'])
-
-    # Remove the previous audio file
-    if not session.get('last_audio_file', None) == None:
-        os.remove(session.get('last_audio_file', ''))
+    if(DEV_MODE):
+        translation = "This is DEV mode."
         
-    # Saving the speech file to the audio directory
-    timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-    filename = f"audio_{timestamp}.mp3"
-    file_path = os.path.join(app.config['AUDIO_FOLDER'], filename)
-    tts.save(file_path)
-
-    wait_for_file(file_path)
-
-    # Storing the path of the last audio file in the session
-    session['last_audio_file'] = file_path
+        return jsonify({
+            'audio_url': url_for('static', filename=f'audio/dev_audio.m4a'), 
+            'translation': translation
+        })
+    else:
+        # Translating the text
+        translation = translate(
+            req_data['text'], 
+            input_language=req_data['input_language'], 
+            output_language=req_data['output_language']
+        )
         
-    return jsonify({
-        'audio_url': url_for('static', filename=f'audio/{filename}'), 
-        'translation': translation
-    })
+        # Converting the translated text into speech
+        tts = gTTS(translation, lang=req_data['output_language'])
+
+        # Remove the previous audio file
+        if not session.get('last_audio_file', None) == None:
+            os.remove(session.get('last_audio_file', ''))
+            
+        # Saving the speech file to the audio directory
+        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        filename = f"audio_{timestamp}.mp3"
+        file_path = os.path.join(app.config['AUDIO_FOLDER'], filename)
+        tts.save(file_path)
+
+        wait_for_file(file_path)
+
+        # Storing the path of the last audio file in the session
+        session['last_audio_file'] = file_path
+        
+        return jsonify({
+            'audio_url': url_for('static', filename=f'audio/{filename}'), 
+            'translation': translation
+        })
 
 @app.route('/audio', methods=['GET'])
 def get_last_audio():         
-    # Returning the path of the last audio file from the session
-    return jsonify({'audio_url': session.get('last_audio_file', '') })
+    if(DEV_MODE):
+        return jsonify({
+            'audio_url': url_for('static', filename=f'audio/dev_audio.m4a')
+        })
+    else:
+        # Returning the path of the last audio file from the session
+        return jsonify({'audio_url': session.get('last_audio_file', '') })
 
 def transcribe(file_path, input_language):
     # Transcribing audio using OpenAI's whisper model

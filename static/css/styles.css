@@ -1,182 +1,197 @@
 /* Basic setup for body */
 body {
-    background-color: #87CEFA; /* Light sky blue color */
-    color: white;
-    font-family: Arial, sans-serif;
+    background-color: #ECE5DD; /* WhatsApp Background color */
+    color: #4A4A4A; /* Font color similar to WhatsApp */
+    font-family: 'Roboto', sans-serif;
     display: flex;
     align-items: center;
     justify-content: center;
     margin: 0;
     padding: 0;
+    height: 100vh;
+    width: 100vw;
     box-sizing: border-box;
-}
-
-h1 {
-    font-size: 2em;
-    margin-bottom: 0px;
-    text-align: center;
-}
-
-.option {
-    text-align: left;
 }
 
 /* App container */
 .app-container {
-    background-color: rgba(0,0,0,0.6);
+    background-color: #FFFFFF; /* WhatsApp chat window color */
+    border-radius: 5px;
+    box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
+    display: flex;
+    flex-direction: column;
+    align-items: stretch;
+    height: 90vh;
+    width: 95vw;
+    max-width: 500px;
+    box-sizing: border-box;
+}
+
+/* App header */
+.app-header {
+    background-color: #075E54; /* WhatsApp header color */
+    color: #FFFFFF;
+    padding: 10px 20px;
+    border-top-left-radius: 5px;
+    border-top-right-radius: 5px;
+}
+
+.app-name {
+    font-size: 1.5em;
+    margin: 0;
+    text-align: center;
+}
+
+/* App body */
+.app-body {
+    display: flex;
+    flex-direction: column;
     padding: 20px;
-    border-radius: 25px;
+    gap: 20px;
+    overflow-y: auto;
+}
+
+/* Action section */
+.action-section, .footer-button-section {
     display: flex;
     flex-direction: column;
     align-items: center;
     gap: 20px;
-    height: 100vh;
-    width: 70vh;
-    box-sizing: border-box;
-}
-
-.action-container, #transcriptContainer, #translationContainer {
-    height: 20%;
-    width: 80%;
-}
-
-.app-name{
-    height: 20%;
-    width: 100%;
-}
-
-/* Buttons */
-#recordButton, #audioButton {
-    padding: 10px 20px;
-    background-color: #FF6347;
-    border: none;
-    color: white;
-    border-radius: 20px;
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: background-color 0.3s;
-    margin-bottom: 20px;
-}
-
-#recordButton:active, #audioButton:active {
-    background-color: #FF4500;
-}
-
-/* Button container */
-.button-container {
-    display: flex;
-    justify-content: center;
-    align-items: center;
-}
-
-/* Containers for transcript and translation */
-#transcriptContainer, #translationContainer {
-    background-color: rgba(255,255,255,0.8);
-    border-radius: 20px;
-    width: 100%;
-    height: 100%;
-    min-height: 100px;
-    display: flex;
-    flex-direction: column;
-    align-items: center;
-    justify-content: center;
-    padding: 10px;
-    box-sizing: border-box;
-    gap: 10px;
-    margin-bottom: 20px;
-    word-wrap: break-word;
-    overflow-y: auto;
-}
-
-/* Text for transcript and translation */
-#transcript, #translation, #transcriptText, #translationText {
-    color: black;
-    font-size: 1em;
-    text-align: center;
-    width: 100%;
-    font-family: 'Roboto', sans-serif;
-    word-wrap: break-word;
 }
 
 /* Language selectors */
 .lang-container {
     display: flex;
     align-items: center;
-    justify-content: space-between;
-    width: 100%;
-    margin-bottom: 20px;
+    justify-content: space-around;
+    width: 60%;
+    padding: 10px;
+    background-color: #F0F0F0;
+    border-radius: 20px;
 }
 
 .lang-selector {
-    width: 25%;
+    width: 35%;
     padding: 10px;
-    font-size: 10px;
-    color: black;
-    border: 1px solid #ddd;
+    font-size: 0.9em;
+    color: #4A4A4A;
+    border: none;
     border-radius: 5px;
-    background-color: #f8f8f8;
+    background-color: #FFFFFF;
+    appearance: none;
+    outline: none;
+}
+
+#modeSelector {
+    width: 90%;
+    padding: 10px;
+    font-weight: bold;
+    font-size: 0.9em;
+    color: #4A4A4A;
+    border: none;
+    border-radius: 5px;
+    background-color: transparent;
     appearance: none;
     outline: none;
     text-align: center;
-    font-family: 'Roboto', sans-serif;
-    font-weight: bold;
 }
 
-/* This is for Firefox */
-.lang-selector::-moz-focus-inner {
-    border: 0;
-}
-
-/* Font styling */
-.selected-input-font, .selected-output-font {
-    font-family: 'Roboto', sans-serif;
-    color: black;
-    font-weight: bold;
+/* Mode selectors */
+.mode-container {
+    display: flex;
+    align-items: center;
+    justify-content: space-around;
+    width: 120px;
+    height: 10%;
+    padding: 10px;
+    background-color: #F0F0F0;
+    border-radius: 20px;
 }
 
 /* Arrow styling */
-#arrow{
-    width: 30px;
-    height: 30px;
-    transition: transform 0.3s ease;
+#arrow {
+    width: 20px;
+    height: 20px;
 }
 
-#arrow.clicked {
-    transform: scale(1.2); /* Increase size by 20% */
+/* Buttons */
+.button-container {
+    display: flex;
+    justify-content: center;
+    align-items: center;
+}
+
+#recordButton, #audioButton {
+    padding: 10px 20px;
+    background-color: #128C7E; /* WhatsApp color for buttons */
+    border: none;
+    color: #FFFFFF;
+    border-radius: 50px;
+    font-size: 1em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+    box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
+}
+
+#recordButton:active, #audioButton:active {
+    background-color: #075E54; /* darker shade for active state */
+}
+
+/* Translation section */
+.output-section {
+    display: flex;
+    flex-direction: column;
+    gap: 20px;
+}
+
+/* Containers for transcript and translation */
+.translation-box {
+    background-color: #DCF8C6; /* WhatsApp message bubble color */
+    border-radius: 5px;
+    padding: 20px;
+    box-sizing: border-box;
+    overflow-y: auto;
+}
+
+#transcriptText, #translationText {
+    color: #075E54; /* WhatsApp color for text headings */
+    font-size: 1.2em;
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+#transcript, #translation {
+    color: #4A4A4A; /* WhatsApp color for text content */
+    font-size: 1em;
+}
+
+/* Conversation mode buttons */
+#stopConversationButton {
+    padding: 10px 20px;
+    background-color: #DC143C;
+    border: none;
+    color: white;
+    border-radius: 20px;
+    font-size: 1.2em;
+    cursor: pointer;
+    transition: background-color 0.3s;
+}
+
+#stopConversationButton:active {
+    background-color: #B22222;
 }
 
 /* Media queries for responsive design */
 @media (max-width: 768px) {
-    html, body {
-        height: 100%;
-    }
-
-    .app-container {
-        gap: 0%; /* Replace fixed gap with relative */
-        width: 100%; /* Change to percentage */
-        max-height: 100%;
-    }
-
-    .action-container, .app-name, #transcriptContainer, #translationContainer {
-        width: 80%; /* Change to percentage */
-        margin-bottom: 2%;
-    }
-
-    .app-name{
-        height: 10%;
-        margin-bottom: 5%;
-    }
-    
     .lang-selector {
-        width: 45%; /* Adjust the width of the language selector */
-        font-size: 12px; /* Adjust the font size */
+        font-size: 0.8em; /* Adjust the font size */
     }
 
-    #recordButton {
-        margin-bottom: 2%;
+    #recordButton, #audioButton {
+        font-size: 0.9em; /* Adjust the font size */
     }
 
-    #arrow, #inputLanguage {
-        margin-right: 2%;
+    .translation-box {
+        font-size: 0.9em; /* Adjust the font size */
     }
 }
