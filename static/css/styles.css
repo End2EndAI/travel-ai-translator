@@ -35,9 +35,14 @@ h1 {
     box-sizing: border-box;
 }
 
-.app-name, .action-container, #transcriptContainer, #translationContainer {
+.action-container, #transcriptContainer, #translationContainer {
     height: 20%;
     width: 80%;
+}
+
+.app-name{
+    height: 20%;
+    width: 100%;
 }
 
 /* Buttons */

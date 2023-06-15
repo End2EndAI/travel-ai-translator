@@ -43,6 +43,7 @@ def transcribe_audio():
 
     # Transcribing the audio file using OpenAI's whisper model
     input_language = request.form['input_language']
+    
     transcript = transcribe(file_path, input_language)
     
     return jsonify({'transcript': transcript})
@@ -52,6 +53,13 @@ def translate_audio():
     # Translating provided text and converting it into speech
     req_data = request.get_json()
 
+    # If the selected output language is 'auto'
+    if req_data['output_language'] == 'auto':
+        return jsonify({
+            'audio_url': '', 
+            'translation': "The output language cannot be set to 'auto'"
+        })
+        
     # Translating the text
     translation = translate(
         req_data['text'], 
@@ -90,25 +98,43 @@ def get_last_audio():
 def transcribe(file_path, input_language):
     # Transcribing audio using OpenAI's whisper model
     with open(file_path, "rb") as audio_file:
-        transcript = openai.Audio.transcribe(
-            "whisper-1", audio_file, language=input_language
-        )
+        
+        if(input_language == "auto"):
+            transcript = openai.Audio.transcribe(
+                "whisper-1", audio_file
+            )
+        else:
+            transcript = openai.Audio.transcribe(
+                "whisper-1", audio_file, language=input_language
+            )
     return transcript['text']
 
 def translate(text, input_language, output_language):
     # Translating text using OpenAI's gpt-3.5-turbo model
-    messages = [
-        {
-            "role": "system", 
-            "content": (
-                f"You are a helpful translator. You will receive a transcribe in "
-                f"'{input_language}', and you have to translate in '{output_language}'. "
-                "The translation should be in spoken language. Only reply with the "
-                "translation, without pronountiation or pinyin or quotes."
-            )
-        },
-        {"role": "user", "content": f"Transcribe : {text}; Translation : "}
-    ]
+    if input_language == "auto":
+        messages = [
+            {
+                "role": "system", 
+                "content": (
+                    f"You are a helpful AI translator. You will receive a transcribe in "
+                    f"'and you have to translate in '{output_language}'."
+                    "The translation should be in spoken language. Only reply with the direct translation."
+                )
+            },
+            {"role": "user", "content": f"Transcribe: {text}\nTranslation:"}
+        ]
+    else:
+        messages = [
+            {
+                "role": "system", 
+                "content": (
+                    f"You are a helpful AI translator. You will receive a transcribe in "
+                    f"'{input_language}', and you have to translate in '{output_language}'. "
+                    "The translation should be in spoken language. Only reply with the direct translation."
+                )
+            },
+            {"role": "user", "content": f"Transcribe: {text}\nTranslation:"}
+        ]
     
     translation = openai.ChatCompletion.create(
         model="gpt-3.5-turbo",
