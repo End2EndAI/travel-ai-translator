@@ -165,22 +165,6 @@ body {
     font-size: 1em;
 }
 
-/* Conversation mode buttons */
-#stopConversationButton {
-    padding: 10px 20px;
-    background-color: #DC143C;
-    border: none;
-    color: white;
-    border-radius: 20px;
-    font-size: 1.2em;
-    cursor: pointer;
-    transition: background-color 0.3s;
-}
-
-#stopConversationButton:active {
-    background-color: #B22222;
-}
-
 /* Media queries for responsive design */
 @media (max-width: 768px) {
     .lang-selector {

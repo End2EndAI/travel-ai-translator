@@ -6,7 +6,6 @@ const inputLanguage = document.getElementById('inputLanguage');
 const outputLanguage = document.getElementById('outputLanguage');
 const arrowImage = document.getElementById('arrow');
 const modeSelector = document.getElementById('modeSelector');
-const stopConversationButton = document.getElementById('stopConversationButton');
 
 // Variables to control recording state and audio data
 let isRecording = false;
@@ -35,7 +34,7 @@ async function startRecording() {
 }
 
 // Stop recording audio and process the recorded data
-async function stopRecording() {
+async function stopRecordingAndSave() {
     if (isRecording) {
         recordButton.textContent = 'Start';
         translation.textContent = '';
@@ -57,6 +56,20 @@ async function stopRecording() {
 
         // Send the audio data to the server for transcription
         sendAudioToServer(audioBlob);
+    }
+}
+
+function stopRecording() {
+    if (isRecording) {
+        recordButton.textContent = 'Start';
+        translation.textContent = '';
+        transcript.textContent = '';
+
+        // Stop recording and release the media stream
+        mediaRecorder.stop();
+        stream.getTracks().forEach(track => track.stop());
+
+        isRecording = false;
     }
 }
 
@@ -102,6 +115,13 @@ async function translateTranscript(transcriptText) {
 
         // Play the translated audio
         playAudio(data['audio_url']);
+
+        // When the audio ends
+        isAudioPlaying = false;
+        if (mode === 'conversation' && !isRecording) {
+            // Swap languages
+            [inputLanguage.value, outputLanguage.value] = [outputLanguage.value, inputLanguage.value];
+        }
     } catch (error) {
         console.error('Error:', error);
     }
@@ -115,17 +135,6 @@ function playAudio(url) {
     audio.addEventListener('canplaythrough', function () {
         audio.play();
     }, false);
-
-    // When the audio ends
-    audio.addEventListener('ended', function() {
-        isAudioPlaying = false;
-        if (mode === 'conversation' && !isRecording) {
-            // Swap languages
-            [inputLanguage.value, outputLanguage.value] = [outputLanguage.value, inputLanguage.value];
-            // Start recording
-            startRecording();
-        }
-    });
 }
 
 // Toggle recording based on the current state
@@ -133,7 +142,7 @@ async function toggleRecording() {
     if (!isRecording) {
         await startRecording();
     } else {
-        await stopRecording();
+        await stopRecordingAndSave();
     }
 }
 
@@ -143,6 +152,7 @@ async function fetchAndPlayAudio() {
         //If it's recording, stop the recording
         stopRecording()
 
+        
         isRecording = false
 
         const data = await fetch('/audio', { method: 'GET' }).then(response => response.json());
@@ -159,8 +169,10 @@ arrowImage.addEventListener('click', function () {
     //If it's recording, stop the recording
     stopRecording()
 
-    // Swap the values of inputLanguage and outputLanguage
-    [inputLanguage.value, outputLanguage.value] = [outputLanguage.value, inputLanguage.value];
+    // Swap the values of inputLanguage and outputLanguage after a delay
+    setTimeout(() => {
+        [inputLanguage.value, outputLanguage.value] = [outputLanguage.value, inputLanguage.value];
+    }, 0);
 
     // Add a 'clicked' class to animate the arrow
     arrowImage.classList.add('clicked');
@@ -174,7 +186,10 @@ inputLanguage.addEventListener("change", function () {
     //If it's recording, stop the recording
     stopRecording()
 
-    changeFontClass("selected-input-font");
+    setTimeout(() => {
+        changeFontClass("selected-input-font");
+    }, 0);
+    
 });
 
 // Change the font class when the output language changes
@@ -182,7 +197,9 @@ outputLanguage.addEventListener("change", function () {
     //If it's recording, stop the recording
     stopRecording()
 
-    changeFontClass("selected-output-font")
+    setTimeout(() => {
+        changeFontClass("selected-output-font")
+    }, 0);
 });
 
 // Change the font class of the selected option
@@ -204,25 +221,10 @@ modeSelector.addEventListener('change', function () {
     //If it's recording, stop the recording
     stopRecording()
 
+    setTimeout(() => {
+        mode = this.value;
+        translation.textContent = '';
+        transcript.textContent = '';
+    }, 0);
 
-    mode = this.value;
-
-    // Hide/Display the 'Stop conversation' button
-    if(mode === 'conversation') {
-        document.querySelector('.conversation-button-container').style.display = 'flex';
-    } else {
-        document.querySelector('.conversation-button-container').style.display = 'none';
-    }
-});
-
-// Handle reset action when button 'Stop conversation' is clicked
-stopConversationButton.addEventListener('click', function() {
-    isAudioPlaying = false;
-    mediaRecorder = null;
-    audioChunks = [];
-    stream = null;
-    recordButton.textContent = 'Start';
-
-    //If it's recording, stop the recording
-    stopRecording()
 });
