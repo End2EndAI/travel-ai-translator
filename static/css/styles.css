@@ -23,13 +23,13 @@ body {
 /* App container */
 .app-container {
     background-color: #FFFFFF; /* WhatsApp chat window color */
-    border-radius: 5px;
+    border-radius: 0px;
     box-shadow: 0 0 10px rgba(0, 0, 0, 0.05);
     display: flex;
     flex-direction: column;
     align-items: stretch;
-    height: 90vh;
-    width: 95vw;
+    height: 100vh;
+    width: 100vw;
     max-width: 500px;
     box-sizing: border-box;
 }
@@ -39,8 +39,8 @@ body {
     background-color: #075E54; /* WhatsApp header color */
     color: #FFFFFF;
     padding: 10px 20px;
-    border-top-left-radius: 5px;
-    border-top-right-radius: 5px;
+    border-top-left-radius: 0px;
+    border-top-right-radius: 0px;
     display: flex;
     flex-direction: column;
     align-items: center;

@@ -14,7 +14,7 @@ config.read('config.ini')
 openai.api_key = config.get('OPENAI_API', 'key')
 
 # Development mode, unable requests to OpenAI
-DEV_MODE = False
+DEV_MODE = True
 
 # Initializing Flask app
 app = Flask(__name__)
