@@ -99,7 +99,7 @@ def translate_audio():
                 os.remove(session.get('last_audio_file', ''))
             
         # Saving the speech file to the audio directory
-        timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
+        timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
         filename = f"text2speech_{timestamp}.mp3"
         file_path = os.path.join(app.config['AUDIO_FOLDER'], filename)
         tts.save(file_path)
