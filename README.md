@@ -22,7 +22,8 @@ To see the Travel AI Translator in action, please visit the live demo [here](htt
 6. [How to Use](#how-to-use)
 7. [Contribute](#contribute)
 8. [License](#license)
-9. [Contact](#contact)
+9. [Confidentiality rules](#confidentiality-rules)
+10. [Contact](#contact)
 
 ## Getting Started
 
@@ -103,6 +104,11 @@ Contributions are always welcome! Thanks !
 ## License
 
 This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) file for details.
+
+## Confidentiality Rules
+
+We prioritize the privacy and confidentiality of our users. All audio recordings and transcriptions are processed securely using OpenAI's API and Google Text-to-Speech API. While these services ensure high accuracy and efficient translation, we want to assure our users that we do not store, share, or use your audio recordings and translations for any purpose other than to provide you with the service. Both OpenAI and Google have stringent data protection standards, and any data sent to their APIs is used solely for the purpose of transcription and translation. When using our application on the Android Play Store, rest assured that your data remains private and is treated with the utmost care. We are committed to upholding the highest standards of data protection and encourage users to review our privacy policy, as well as those of OpenAI and Google, for further details.
+
 
 ## Contact
 
