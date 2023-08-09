@@ -23,7 +23,7 @@ DEV_MODE_APP = False
 # Initializing Flask app
 app = Flask(__name__)
 # Setting up paths for upload and audio directories
-app.config['UPLOAD_FOLDER'] = "./"  
+app.config['UPLOAD_FOLDER'] = "static/audio/"  
 app.config['AUDIO_FOLDER'] = "static/audio/"
 # Generating a secret key for the session
 app.config['SECRET_KEY'] = secrets.token_hex(16)
@@ -41,7 +41,7 @@ def transcribe_audio():
 
     # Securing the filename and saving it in the defined upload directory
     audio_file = request.files['audio']
-    filename = f"{secure_filename(audio_file.filename)}_{uuid.uuid4()}.wav"
+    filename = f"recording_{uuid.uuid4()}.wav"
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     audio_file.save(file_path)
 
@@ -59,10 +59,6 @@ def transcribe_audio():
     # Save the transcript to the CSV file along with the IP address and User-Agent
     user_agent = request.headers.get('User-Agent', 'Unknown')  # Default to 'Unknown' if User-Agent header is missing
     save_to_csv(transcript, request.remote_addr, user_agent)
-    
-    # Remove recording
-    if os.path.exists(file_path):
-        os.remove(file_path)
         
     return jsonify({'transcript': transcript})
 
@@ -97,13 +93,13 @@ def translate_audio():
         tts = gTTS(translation, lang=req_data['output_language'])
 
         # Remove the previous audio file
-        if not session.get('last_audio_file', None) == None:
-            if os.path.exists(session.get('last_audio_file', '')):
-                os.remove(session.get('last_audio_file', ''))
+        #if not session.get('last_audio_file', None) == None:
+        #    if os.path.exists(session.get('last_audio_file', '')):
+        #        os.remove(session.get('last_audio_file', ''))
             
         # Saving the speech file to the audio directory
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
-        filename = f"audio_{timestamp}.mp3"
+        filename = f"text2speech_{timestamp}.mp3"
         file_path = os.path.join(app.config['AUDIO_FOLDER'], filename)
         tts.save(file_path)
 
