@@ -18,7 +18,7 @@ openai.api_key = config.get('OPENAI_API', 'key')
 # Development mode, unable requests to OpenAI
 DEV_MODE = False
 # Used when testing the app with the flask server locally, needs a signed certificate
-DEV_MODE_APP = False
+DEV_MODE_APP = True
 
 # Initializing Flask app
 app = Flask(__name__)
@@ -41,7 +41,8 @@ def transcribe_audio():
 
     # Securing the filename and saving it in the defined upload directory
     audio_file = request.files['audio']
-    filename = f"recording_{uuid.uuid4()}.wav"
+    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    filename = f"recording_{timestamp}_{uuid.uuid4()}.wav"
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     audio_file.save(file_path)
 
@@ -93,9 +94,9 @@ def translate_audio():
         tts = gTTS(translation, lang=req_data['output_language'])
 
         # Remove the previous audio file
-        #if not session.get('last_audio_file', None) == None:
-        #    if os.path.exists(session.get('last_audio_file', '')):
-        #        os.remove(session.get('last_audio_file', ''))
+        if not session.get('last_audio_file', None) == None:
+            if os.path.exists(session.get('last_audio_file', '')):
+                os.remove(session.get('last_audio_file', ''))
             
         # Saving the speech file to the audio directory
         timestamp = datetime.now().strftime("%Y%m%d%H%M%S")
