@@ -1,4 +1,5 @@
-Privacy Policy for Travel AI Translator App
+# Privacy Policy for Travel AI Translator App
+
 ## 1. Introduction
 Welcome to the privacy policy for the Travel AI Translator app. This policy outlines our commitment to protecting the privacy of our users. This policy applies specifically to the Travel AI Translator app listed on Google Play.
 
