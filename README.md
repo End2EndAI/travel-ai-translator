@@ -5,7 +5,7 @@ Travel AI Translator is a multi-language transcription and translation web appli
 </br>
 
 <div align="center">
-    <img src="static/img/demo.png" width="250" height="350" >
+    <img src="static/img/demo.png" width="270" height="600" >
 </div>
 
 ## Demo
