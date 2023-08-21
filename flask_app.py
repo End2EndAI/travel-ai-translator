@@ -18,7 +18,7 @@ openai.api_key = config.get('OPENAI_API', 'key')
 # Development mode, unable requests to OpenAI
 DEV_MODE = False
 # Used when testing the app with the flask server locally, needs a signed certificate
-DEV_MODE_APP = True
+DEV_MODE_APP = False
 
 # Initializing Flask app
 app = Flask(__name__)
@@ -42,7 +42,7 @@ def transcribe_audio():
     # Securing the filename and saving it in the defined upload directory
     audio_file = request.files['audio']
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-    filename = f"recording_{timestamp}_{uuid.uuid4()}.wav"
+    filename = f"recording_{timestamp}_{uuid.uuid4()}.webm"
     file_path = os.path.join(app.config['UPLOAD_FOLDER'], filename)
     audio_file.save(file_path)
 

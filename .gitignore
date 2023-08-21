@@ -165,3 +165,4 @@ cython_debug/
 *.m4a
 *.pem
 *.csv
+*.webm

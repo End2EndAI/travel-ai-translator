@@ -14,6 +14,7 @@ let audioChunks = [];
 let stream;
 let mode = 'solo';
 let isAudioPlaying = false;
+let startTime;
 
 // Start recording audio
 async function startRecording() {
@@ -31,6 +32,8 @@ async function startRecording() {
 
     // Start recording
     mediaRecorder.start();
+    // Record duration
+    startTime = performance.now();
 }
 
 // Stop recording audio and process the recorded data
@@ -43,19 +46,26 @@ async function stopRecordingAndSave() {
         // Wait for the 'stop' event to resolve
         const stopPromise = new Promise(resolve => mediaRecorder.addEventListener('stop', resolve));
 
-        // Stop recording and release the media stream
+        // Stop recording and release the media stream. Get duration of the recording.
         mediaRecorder.stop();
+        const duration = (performance.now() - startTime) / 1000
+
         stream.getTracks().forEach(track => track.stop());
         await stopPromise;
 
         isRecording = false;
 
         // Create a Blob object from the collected audio data
-        const audioBlob = new Blob(audioChunks, { type: 'audio/wav' });
+        const audioBlob = new Blob(audioChunks, { type: 'audio/webm;codecs=opus' });
         audioChunks.length = 0;
 
-        // Send the audio data to the server for transcription
-        sendAudioToServer(audioBlob);
+        // Check if duration is more than 30 seconds. If so, don't transcribe.
+        if(duration > 30) {
+            transcript.textContent = "Your audio recording is too long (> 30 seconds), please try again."
+        } else {
+            // Send the audio data to the server for transcription
+            sendAudioToServer(audioBlob);
+        }
     }
 }
 
