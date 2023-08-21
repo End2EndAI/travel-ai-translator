@@ -9,8 +9,10 @@ This app is developed and maintained by Louis FONTAINE / End2EndAI, the same ent
 ## 3. Data Collection and Usage
 Our app accesses, collects, and uses the following types of personal and sensitive user data:
 
-Audio Recordings: Used for transcription and translation purposes.
-Transcriptions and Translations: Generated based on user input. Transcribed texts are saved for monitoring purposes.
+- Audio Recordings: Used for transcription and translation purposes.
+
+- Transcriptions and Translations: Generated based on user input. Transcribed texts are saved for monitoring purposes.
+
 We do not share this data with any third parties, except for the transcribed texts which are saved for monitoring purposes. The primary use of the data is to provide transcription and translation services within the app.
 
 ## 4. Data Sharing
