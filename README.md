@@ -6,7 +6,8 @@ You are welcome to inspire and use the code freely for your own projects.
 </br>
 
 <div align="center">
-    <img src="static/img/demo.png" width="270" height="600" >
+    <img src="static/img/screenshot1.jpg" width="304" height="607" >
+	<img src="static/img/screenshot2.png" width="304" height="607" >
 </div>
 
 ## Demo
