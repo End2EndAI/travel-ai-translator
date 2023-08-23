@@ -60,8 +60,8 @@ async function stopRecordingAndSave() {
         audioChunks.length = 0;
 
         // Check if duration is more than 30 seconds. If so, don't transcribe.
-        if(duration > 30) {
-            transcript.textContent = "Your audio recording is too long (> 30 seconds), please try again."
+        if(duration > 15) {
+            transcript.textContent = "Your audio recording is too long (> 15 seconds), please try again."
         } else {
             // Send the audio data to the server for transcription
             sendAudioToServer(audioBlob);
