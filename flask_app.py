@@ -194,5 +194,3 @@ def save_to_csv(transcript, ip_address, user_agent, filename="history/transcript
 if __name__ == '__main__':
     if DEV_MODE_APP:
         app.run(ssl_context=('cert.pem', 'key.pem'), debug=True, host="0.0.0.0", port=5009)
-    else:
-        app.run(host="0.0.0.0", port=5009)

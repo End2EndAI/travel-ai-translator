@@ -66,7 +66,7 @@ You also need an API key for OpenAI API.
 4. Start the Flask server:
 
     ```
-    python flask_app.py
+    flask --app flask_app.py run --port 5009 --host 0.0.0.0
     ```
 
 5. Navigate to http://localhost:5009 in your web browser.
