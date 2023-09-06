@@ -39,13 +39,6 @@ jobs:
           path: |
             . 
             !venv/
-            
-      # Create config.ini file using GitHub Secret
-      
-      - name: Create config.ini
-        run: |
-          echo "[OPENAI_API]" > config.ini
-          echo "key = ${{ secrets.OPENAI_API_KEY }}" >> config.ini
 
   deploy:
     runs-on: ubuntu-latest
@@ -60,6 +53,12 @@ jobs:
         with:
           name: python-app
           path: .
+      
+      # Create config.ini file using GitHub Secret
+      - name: Create config.ini
+        run: |
+          echo "[OPENAI_API]" > config.ini
+          echo "key = ${{ secrets.OPENAI_API_KEY }}" >> config.ini
           
       - name: 'Deploy to Azure Web App'
         uses: azure/webapps-deploy@v2
