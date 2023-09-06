@@ -39,6 +39,13 @@ jobs:
           path: |
             . 
             !venv/
+            
+      # Create config.ini file using GitHub Secret
+      
+      - name: Create config.ini
+        run: |
+          echo "[OPENAI_API]" > config.ini
+          echo "key = ${{ secrets.OPENAI_API_KEY }}" >> config.ini
 
   deploy:
     runs-on: ubuntu-latest
