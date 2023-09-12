@@ -1,8 +1,15 @@
 # Travel AI Translator
 
-Travel AI Translator is a multi-language transcription and translation web application. The application allows users to record audio and transcribes the audio into the text of a selected language. Then, it translates the transcribed text into another selected language and returns an audio output of the translated text. This entire process is powered by OpenAI's API, ensuring high accuracy and efficient translation.
+This repository is a template for anyone wishing to build quickly a web application using the following technologies:
+- Flask
+- OpenAI Speech-to-text API
+- OpenAI GPT API 
+- Google Text-to-Speech API
 
 You are welcome to inspire and use the code freely for your own projects.
+
+The showcase application, Travel AI Translator, is a multi-language transcription and translation web application. The application allows users to record audio and transcribes the audio into the text of a selected language. Then, it translates the transcribed text into another selected language and returns an audio output of the translated text. This entire process is powered by OpenAI's API, ensuring high accuracy and efficient translation.
+
 </br>
 
 <div align="center">
@@ -90,15 +97,10 @@ Afrikaans, Arabic, Armenian, Azerbaijani, Belarusian, Bosnian, Bulgarian, Catala
 ## How to Use
 
 1. Select the input language - this is the language of your audio input.
-
 2. Select the output language - this is the language into which you want the audio input to be translated.
-
 3. Click the "Start" button to start recording your voice. The button will change to "Stop".
-
 4. Speak into your device's microphone in the selected input language.
-
 5. Click the "Stop" button to stop recording. The application will transcribe the audio, translate it to the selected output language, and provide the translation as text and audio.
-
 6. To swap the input and output languages, click on the arrow between the language selectors.
 
 ## Contribute
