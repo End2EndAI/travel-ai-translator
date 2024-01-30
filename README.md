@@ -89,7 +89,7 @@ You also need an API key for OpenAI API.
 4. Start the Flask server:
     In Anaconda Prompt :
     ```
-    flask --app app.py run --port 5009 --host 0.0.0.0
+    flask --app app.py run --port 5009 --host 0.0.0.0 --cert=cert.pem --key=key.pem
     ```
 
 5. Navigate to http://localhost:5009 in your web browser.
