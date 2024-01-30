@@ -18,7 +18,7 @@ openai.api_key = config.get('OPENAI_API', 'key')
 # Development mode, unable requests to OpenAI
 DEV_MODE = False
 # Used when testing the app with the flask server locally, needs a signed certificate
-DEV_MODE_APP = False
+DEV_MODE_APP = True
 
 # Initializing Flask app
 app = Flask(__name__)

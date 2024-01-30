@@ -59,7 +59,7 @@ You also need an API key for OpenAI API.
     pip install -r requirements.txt
     ```
     
-3. **Configure the OpenAI API Key**
+3. Configure the OpenAI API Key
 
     Create a `config.ini` file at the root of the project. Enter your OpenAI API Key in the following format:
 
@@ -70,8 +70,23 @@ You also need an API key for OpenAI API.
 
     Make sure to replace `<your-key>` with your actual OpenAI API Key.
 
-4. Start the Flask server:
+3. Generate a self signed certificate
+    In order to be able to record audio in a browser, the flask app needs to have SSL certificates.
 
+    Open a Terminal or Command Prompt in this project folder:
+
+    - On Unix-based systems, you can open a terminal.
+    - On Windows, you can use `git bash`
+
+    Generate a Private Key:
+    - Execute the following command to generate a private key (key.pem): ```openssl genrsa -out key.pem 2048```
+    This command creates a 2048-bit RSA private key. You can adjust the bit length for stronger encryption, but 2048 is generally sufficient.
+    - Generate a Self-Signed Certificate:
+    Now, generate a self-signed certificate (cert.pem) using the private key: ```openssl req -new -x509 -key key.pem -out cert.pem -days 365```
+    This command will prompt you to enter various details like country name, state, organization, etc. These details are used to fill in the certificate's subject field.
+
+4. Start the Flask server:
+    In Anaconda Prompt :
     ```
     flask --app app.py run --port 5009 --host 0.0.0.0
     ```
