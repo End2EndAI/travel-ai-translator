@@ -71,6 +71,7 @@ You also need an API key for OpenAI API.
     Make sure to replace `<your-key>` with your actual OpenAI API Key.
 
 3. Generate a self signed certificate
+    
     In order to be able to record audio in a browser, the flask app needs to have SSL certificates.
 
     Open a Terminal or Command Prompt in this project folder:
