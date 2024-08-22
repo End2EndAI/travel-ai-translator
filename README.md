@@ -134,4 +134,4 @@ We prioritize the privacy and confidentiality of our users. All audio recordings
 
 ## Contact
 
-For any inquiries, feedback, or suggestions, please feel free to reach out to me. I am always eager to discuss this project, potential improvements, or any other topics of interest. You can contact me directly via email at [lf94777@gmail.com](mailto:lf94777@gmail.com). I look forward to hearing from you and working together to improve and expand this tool's capabilities!
+For any inquiries, feedback, or suggestions, please feel free to reach out to me. I am always eager to discuss this project, potential improvements, or any other topics of interest. You can contact me directly via email at [louis.fontaine.pro@gmail.com](mailto:louis.fontaine.pro@gmail.com). I look forward to hearing from you and working together to improve and expand this tool's capabilities!
