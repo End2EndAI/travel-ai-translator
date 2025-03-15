@@ -1,0 +1,19 @@
+[tool.poetry]
+name = "travel-ai-translator"
+version = "0.1.0"
+description = "AI-powered travel translator"
+authors = ["Your Name <your.email@example.com>"]
+readme = "README.md"
+
+[tool.poetry.dependencies]
+python = "^3.8"
+flask = "2.3.2"
+openai = "0.27.8"
+gtts = "2.3.2"
+colorama = "0.4.6"
+importlib-metadata = "6.6.0"
+
+
+[build-system]
+requires = ["poetry-core"]
+build-backend = "poetry.core.masonry.api"
