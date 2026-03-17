@@ -8,6 +8,7 @@
     <link rel="stylesheet" href="{{ url_for('static', filename='css/styles.css') }}">
 </head>
 <body>
+    <div id="toastContainer"></div>
     <main class="app-container">
         <header class="app-header">
             <img src="/static/img/logo.png" alt="logo" id="logo">
@@ -22,7 +23,7 @@
                 </section>
                 <div class="lang-container">
                     <select id="inputLanguage" class="lang-selector">
-                        <option value="fr"  class="selected-input-font">French</option>
+                        <option value="fr">French</option>
                         <option value="auto">Auto</option>
                         <option value="en">English</option>
                         <option value="zh">Chinese</option>
@@ -78,11 +79,11 @@
                         <option value="th">Thai</option>
                         <option value="uk">Ukrainian</option>
                         <option value="ur">Urdu</option>
-                        <option value="cy">Welsh</option>    
+                        <option value="cy">Welsh</option>
                     </select>
                     <img src="/static/img/arrow.png" alt="arrow" id="arrow">
                     <select id="outputLanguage" class="lang-selector">
-                        <option value="en" class="selected-output-font">English</option>
+                        <option value="en">English</option>
                         <option value="auto">Auto</option>
                         <option value="fr">French</option>
                         <option value="zh">Chinese</option>
@@ -143,26 +144,32 @@
                 </div>
                 <div class="button-container">
                     <button id="recordButton" onclick="toggleRecording()">Start</button>
-                </div>                
+                    <button id="clearButton" onclick="clearOutput()">Clear</button>
+                </div>
             </section>
             <section class="output-section">
                 <div class="translation-box" id="transcriptContainer">
-                    <h2 id="transcriptText">Transcript</h2>
+                    <div class="box-header">
+                        <h2 id="transcriptText">Transcript</h2>
+                        <button class="copy-button" onclick="copyToClipboard('transcript')" title="Copy transcript">&#128203;</button>
+                    </div>
                     <div id="transcript"></div>
                 </div>
                 <div class="translation-box" id="translationContainer">
-                    <h2 id="translationText">Translation</h2>
+                    <div class="box-header">
+                        <h2 id="translationText">Translation</h2>
+                        <button class="copy-button" onclick="copyToClipboard('translation')" title="Copy translation">&#128203;</button>
+                    </div>
                     <div id="translation"></div>
                 </div>
             </section>
             <section class="footer-button-section">
                 <div class="button-container">
                     <button id="audioButton" onclick="fetchAndPlayAudio()">Hear again</button>
-                </div>  
-            </section>        
+                </div>
+            </section>
         </div>
     </main>
-    <script src="https://code.jquery.com/jquery-3.5.1.min.js"></script>
     <script src="{{ url_for('static', filename='js/app.js') }}"></script>
 </body>
 </html>
