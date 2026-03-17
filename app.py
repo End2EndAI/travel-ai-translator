@@ -2,7 +2,7 @@ import os
 import time
 from datetime import datetime
 import configparser
-from flask import Flask, request, render_template, jsonify, url_for, session
+from flask import Flask, request, render_template, jsonify, url_for, session, send_from_directory
 from openai import OpenAI
 from gtts import gTTS
 import secrets
@@ -21,18 +21,30 @@ if not api_key:
 
 client = OpenAI(api_key=api_key)
 
+# Vercel's filesystem is read-only except /tmp — detect and adapt
+IS_VERCEL = bool(os.environ.get("VERCEL"))
+AUDIO_FOLDER = "/tmp/audio" if IS_VERCEL else "static/audio"
+UPLOAD_FOLDER = "/tmp/uploads" if IS_VERCEL else "static/audio"
+
 # Initializing Flask app
 app = Flask(__name__)
-app.config["UPLOAD_FOLDER"] = "static/audio/"
-app.config["AUDIO_FOLDER"] = "static/audio/"
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["AUDIO_FOLDER"] = AUDIO_FOLDER
 app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", secrets.token_hex(16))
 
-os.makedirs(app.config["AUDIO_FOLDER"], exist_ok=True)
+os.makedirs(AUDIO_FOLDER, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 @app.route("/")
 def index():
     return render_template("index.html")
+
+
+@app.route("/tmp-audio/<filename>")
+def serve_tmp_audio(filename):
+    """Serve audio files from /tmp on Vercel (filesystem is otherwise read-only)."""
+    return send_from_directory("/tmp/audio", filename)
 
 
 @app.route("/transcribe", methods=["POST"])
@@ -98,8 +110,13 @@ def translate_audio():
     wait_for_file(file_path)
     session["last_audio_file"] = file_path
 
+    if IS_VERCEL:
+        audio_url = url_for("serve_tmp_audio", filename=filename)
+    else:
+        audio_url = url_for("static", filename=f"audio/{filename}")
+
     return jsonify({
-        "audio_url": url_for("static", filename=f"audio/{filename}"),
+        "audio_url": audio_url,
         "translation": translation,
     })
 

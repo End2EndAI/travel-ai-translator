@@ -99,46 +99,45 @@ Follow the steps below to set up the project locally.
 
 ## Deployment
 
-### PythonAnywhere (free tier available)
+### Vercel
 
-PythonAnywhere is the simplest option for deploying a Flask app.
+Vercel runs Flask as a serverless Python function. The `vercel.json` and `api/index.py` files are already included in this repository.
 
-1. **Create a free account** at [pythonanywhere.com](https://www.pythonanywhere.com)
-
-2. **Upload your code** via the Files tab or use Git:
+1. **Install the Vercel CLI:**
     ```bash
-    git clone https://github.com/End2EndAI/travel-ai-translator.git
+    npm install -g vercel
     ```
 
-3. **Create a virtual environment** in a Bash console:
+2. **Log in to Vercel:**
     ```bash
-    mkvirtualenv myenv --python=python3.11
-    pip install -r requirements.txt
+    vercel login
     ```
 
-4. **Configure a Web App:**
-   - Go to the **Web** tab → Add a new web app
-   - Choose **Manual configuration** → Python 3.11
-   - Set the **Source code** path to your cloned repo
-   - Set the **Virtualenv** path to your venv
-
-5. **Set the WSGI file** (link provided in the Web tab):
-    ```python
-    import sys
-    import os
-
-    path = '/home/yourusername/travel-ai-translator'
-    if path not in sys.path:
-        sys.path.append(path)
-
-    os.environ['OPENAI_API_KEY'] = 'your-key-here'
-
-    from app import app as application
+3. **Deploy:**
+    ```bash
+    vercel --prod
     ```
 
-6. **Reload** the web app. Your app is live at `yourusername.pythonanywhere.com`.
+    Vercel will detect `vercel.json` and deploy automatically.
 
-    > **Note:** PythonAnywhere serves over HTTPS by default — no need to manage SSL certificates.
+4. **Set environment variables** in the [Vercel dashboard](https://vercel.com/dashboard) under your project → Settings → Environment Variables:
+
+    | Variable | Description |
+    |---|---|
+    | `OPENAI_API_KEY` | Your OpenAI API key |
+    | `SECRET_KEY` | A random secret for Flask sessions |
+
+    Or set them via CLI:
+    ```bash
+    vercel env add OPENAI_API_KEY
+    vercel env add SECRET_KEY
+    ```
+
+5. Your app is live at `your-project.vercel.app`.
+
+    > **Note:** Vercel provides HTTPS automatically — browser microphone access works out of the box, no SSL certificate setup needed.
+
+    > **Note:** Audio files are stored in `/tmp` on Vercel (the filesystem is otherwise read-only on serverless). Files are ephemeral and served directly by the app — this works fine since audio is played immediately after translation.
 
 ---
 
@@ -176,9 +175,9 @@ PythonAnywhere is the simplest option for deploying a Flask app.
 |---|---|---|
 | `OPENAI_API_KEY` | Yes | Your OpenAI API key |
 | `SECRET_KEY` | No | Flask session secret (auto-generated if not set) |
-| `PORT` | No | Port to run on (default: `5009`) |
-| `SSL_CERT` | No | Path to SSL cert file (default: `cert.pem`) |
-| `SSL_KEY` | No | Path to SSL key file (default: `key.pem`) |
+| `PORT` | No | Port to run on locally (default: `5009`) |
+| `SSL_CERT` | No | Path to SSL cert for local dev (default: `cert.pem`) |
+| `SSL_KEY` | No | Path to SSL key for local dev (default: `key.pem`) |
 
 ---
 
