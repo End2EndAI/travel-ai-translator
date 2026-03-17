@@ -2,66 +2,72 @@ import os
 import time
 from datetime import datetime
 import configparser
-from flask import Flask, request, render_template, jsonify, url_for, session
-import openai
+from flask import Flask, request, render_template, jsonify, url_for, session, send_from_directory
+from openai import OpenAI
 from gtts import gTTS
 import secrets
 import csv
 import uuid
 
-# Loading OpenAI API key from configuration file
-config = configparser.ConfigParser()
-config.read("config.ini")
-openai.api_key = config.get("OPENAI_API", "key")
+# Load OpenAI API key — environment variable takes priority over config.ini
+api_key = os.environ.get("OPENAI_API_KEY")
+if not api_key:
+    config = configparser.ConfigParser()
+    config.read("config.ini")
+    try:
+        api_key = config.get("OPENAI_API", "key")
+    except (configparser.NoSectionError, configparser.NoOptionError):
+        api_key = None
 
-# Development mode, unable requests to OpenAI
-DEV_MODE = False
-# Used when testing the app with the flask server locally, needs a signed certificate
-DEV_MODE_APP = True
+client = OpenAI(api_key=api_key)
+
+# Vercel's filesystem is read-only except /tmp — detect and adapt
+IS_VERCEL = bool(os.environ.get("VERCEL"))
+AUDIO_FOLDER = "/tmp/audio" if IS_VERCEL else "static/audio"
+UPLOAD_FOLDER = "/tmp/uploads" if IS_VERCEL else "static/audio"
 
 # Initializing Flask app
 app = Flask(__name__)
-# Setting up paths for upload and audio directories
-app.config["UPLOAD_FOLDER"] = "static/audio/"
-app.config["AUDIO_FOLDER"] = "static/audio/"
-# Generating a secret key for the session
-app.config["SECRET_KEY"] = secrets.token_hex(16)
+app.config["UPLOAD_FOLDER"] = UPLOAD_FOLDER
+app.config["AUDIO_FOLDER"] = AUDIO_FOLDER
+app.config["SECRET_KEY"] = os.environ.get("SECRET_KEY", secrets.token_hex(16))
+
+os.makedirs(AUDIO_FOLDER, exist_ok=True)
+os.makedirs(UPLOAD_FOLDER, exist_ok=True)
 
 
 @app.route("/")
 def index():
-    # Serving the initial index page
     return render_template("index.html")
+
+
+@app.route("/tmp-audio/<filename>")
+def serve_tmp_audio(filename):
+    """Serve audio files from /tmp on Vercel (filesystem is otherwise read-only)."""
+    return send_from_directory("/tmp/audio", filename)
 
 
 @app.route("/transcribe", methods=["POST"])
 def transcribe_audio():
-    # Transcribing uploaded audio file
     if "audio" not in request.files:
         return jsonify({"error": "No audio file provided"}), 400
 
-    # Securing the filename and saving it in the defined upload directory
     audio_file = request.files["audio"]
     timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
     filename = f"recording_{timestamp}_{uuid.uuid4()}.webm"
     file_path = os.path.join(app.config["UPLOAD_FOLDER"], filename)
     audio_file.save(file_path)
 
-    # Waiting for the file to be completely written to the disk
     wait_for_file(file_path)
 
-    # Transcribing the audio file using OpenAI's whisper model
     input_language = request.form["input_language"]
 
-    if DEV_MODE:
-        transcript = "This is DEV mode."
-    else:
+    try:
         transcript = transcribe(file_path, input_language)
+    except Exception as e:
+        return jsonify({"error": f"Transcription failed: {str(e)}"}), 500
 
-    # Save the transcript to the CSV file along with the IP address and User-Agent
-    user_agent = request.headers.get(
-        "User-Agent", "Unknown"
-    )  # Default to 'Unknown' if User-Agent header is missing
+    user_agent = request.headers.get("User-Agent", "Unknown")
     save_to_csv(transcript, request.remote_addr, user_agent)
 
     return jsonify({"transcript": transcript})
@@ -69,142 +75,113 @@ def transcribe_audio():
 
 @app.route("/translate", methods=["POST"])
 def translate_audio():
-    # Translating provided text and converting it into speech
     req_data = request.get_json()
 
-    # If the selected output language is 'auto'
     if req_data["output_language"] == "auto":
-        return jsonify(
-            {
-                "audio_url": "",
-                "translation": "The output language cannot be set to 'auto'",
-            }
-        )
+        return jsonify({
+            "audio_url": "",
+            "translation": "The output language cannot be set to 'auto'.",
+        })
 
-    if DEV_MODE:
-        translation = "This is DEV mode."
-
-        return jsonify(
-            {
-                "audio_url": url_for("static", filename=f"audio/dev_audio.m4a"),
-                "translation": translation,
-            }
-        )
-    else:
-        # Translating the text
+    try:
         translation = translate(
             req_data["text"],
             input_language=req_data["input_language"],
             output_language=req_data["output_language"],
         )
+    except Exception as e:
+        return jsonify({"error": f"Translation failed: {str(e)}"}), 500
 
-        # Converting the translated text into speech
+    try:
         tts = gTTS(translation, lang=req_data["output_language"])
+    except Exception as e:
+        return jsonify({"error": f"Text-to-speech failed: {str(e)}"}), 500
 
-        # Remove the previous audio file
-        if not session.get("last_audio_file", None) == None:
-            if os.path.exists(session.get("last_audio_file", "")):
-                os.remove(session.get("last_audio_file", ""))
+    # Remove the previous audio file for this session
+    last_audio = session.get("last_audio_file")
+    if last_audio and os.path.exists(last_audio):
+        os.remove(last_audio)
 
-        # Saving the speech file to the audio directory
-        timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
-        filename = f"text2speech_{timestamp}.mp3"
-        file_path = os.path.join(app.config["AUDIO_FOLDER"], filename)
-        tts.save(file_path)
+    timestamp = datetime.now().strftime("%Y-%m-%d-%H-%M-%S")
+    filename = f"text2speech_{timestamp}.mp3"
+    file_path = os.path.join(app.config["AUDIO_FOLDER"], filename)
+    tts.save(file_path)
 
-        wait_for_file(file_path)
+    wait_for_file(file_path)
+    session["last_audio_file"] = file_path
 
-        # Storing the path of the last audio file in the session
-        session["last_audio_file"] = file_path
+    if IS_VERCEL:
+        audio_url = url_for("serve_tmp_audio", filename=filename)
+    else:
+        audio_url = url_for("static", filename=f"audio/{filename}")
 
-        return jsonify(
-            {
-                "audio_url": url_for("static", filename=f"audio/{filename}"),
-                "translation": translation,
-            }
-        )
+    return jsonify({
+        "audio_url": audio_url,
+        "translation": translation,
+    })
 
 
 @app.route("/audio", methods=["GET"])
 def get_last_audio():
-    if DEV_MODE:
-        return jsonify(
-            {"audio_url": url_for("static", filename=f"audio/dev_audio.m4a")}
-        )
-    else:
-        # Returning the path of the last audio file from the session
-        return jsonify({"audio_url": session.get("last_audio_file", "")})
+    return jsonify({"audio_url": session.get("last_audio_file", "")})
 
 
 def transcribe(file_path, input_language):
-    # Transcribing audio using OpenAI's whisper model
     with open(file_path, "rb") as audio_file:
-        if input_language == "auto":
-            transcript = openai.Audio.transcribe("whisper-1", audio_file)
-        else:
-            transcript = openai.Audio.transcribe(
-                "whisper-1", audio_file, language=input_language
-            )
-    return transcript["text"]
+        kwargs = {"model": "whisper-1", "file": audio_file}
+        if input_language != "auto":
+            kwargs["language"] = input_language
+        result = client.audio.transcriptions.create(**kwargs)
+    return result.text
 
 
 def translate(text, input_language, output_language):
-    # Translating text using OpenAI's gpt-3.5-turbo model
     if input_language == "auto":
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    f"You are an expert translator specialized in converting spoken language to '{output_language}'. "
-                    f"Translate the following text into natural, conversational {output_language}. "
-                    f"Maintain the original tone, formality level, and cultural context where appropriate. "
-                    f"If there are idioms or expressions, translate them to equivalent expressions in {output_language} rather than literal translations. "
-                    f"Only respond with the direct translation, no explanations or additional text."
-                ),
-            },
-            {"role": "user", "content": f"{text}"},
-        ]
+        system_prompt = (
+            f"You are an expert translator specialized in converting spoken language to '{output_language}'. "
+            f"Translate the following text into natural, conversational {output_language}. "
+            f"Maintain the original tone, formality level, and cultural context where appropriate. "
+            f"If there are idioms or expressions, translate them to equivalent expressions in {output_language} rather than literal translations. "
+            f"Only respond with the direct translation, no explanations or additional text."
+        )
     else:
-        messages = [
-            {
-                "role": "system",
-                "content": (
-                    f"You are an expert translator specialized in converting {input_language} to {output_language}. "
-                    f"Translate the following {input_language} text into natural, conversational {output_language}. "
-                    f"Maintain the original tone, formality level, and cultural context where appropriate. "
-                    f"If there are idioms or expressions in {input_language}, translate them to equivalent expressions in {output_language} rather than literal translations. "
-                    f"Only respond with the direct translation, no explanations or additional text."
-                ),
-            },
-            {"role": "user", "content": f"{text}"},
-        ]
+        system_prompt = (
+            f"You are an expert translator specialized in converting {input_language} to {output_language}. "
+            f"Translate the following {input_language} text into natural, conversational {output_language}. "
+            f"Maintain the original tone, formality level, and cultural context where appropriate. "
+            f"If there are idioms or expressions in {input_language}, translate them to equivalent expressions in {output_language} rather than literal translations. "
+            f"Only respond with the direct translation, no explanations or additional text."
+        )
 
-    translation = openai.ChatCompletion.create(model="gpt-4o-mini", messages=messages)
+    messages = [
+        {"role": "system", "content": system_prompt},
+        {"role": "user", "content": text},
+    ]
 
-    return translation["choices"][0]["message"]["content"]
+    response = client.chat.completions.create(model="gpt-4o-mini", messages=messages)
+    return response.choices[0].message.content
 
 
 def wait_for_file(file_path):
-    # Wait for file to exist and to be non-empty before proceeding
     while not os.path.exists(file_path) or not os.path.getsize(file_path) > 0:
         time.sleep(0.1)
 
 
 def save_to_csv(transcript, ip_address, user_agent, filename="history/transcripts.csv"):
-    # Check if the directory exists, if not, create it
     directory = os.path.dirname(filename)
     if not os.path.exists(directory):
         os.makedirs(directory)
-
     with open(filename, mode="a", newline="") as file:
         writer = csv.writer(file)
-        # The current time, transcript, IP address, and User-Agent are saved
         writer.writerow([datetime.now(), transcript, ip_address, user_agent])
 
 
-# Run the Flask app
 if __name__ == "__main__":
-    if DEV_MODE_APP:
-        app.run(
-            ssl_context=("cert.pem", "key.pem"), debug=True, host="0.0.0.0", port=5009
-        )
+    port = int(os.environ.get("PORT", 5009))
+    ssl_cert = os.environ.get("SSL_CERT", "cert.pem")
+    ssl_key = os.environ.get("SSL_KEY", "key.pem")
+
+    if os.path.exists(ssl_cert) and os.path.exists(ssl_key):
+        app.run(ssl_context=(ssl_cert, ssl_key), debug=False, host="0.0.0.0", port=port)
+    else:
+        app.run(debug=False, host="0.0.0.0", port=port)

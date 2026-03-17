@@ -129,9 +129,10 @@ body {
     display: flex;
     justify-content: center;
     align-items: center;
+    gap: 12px;
 }
 
-#recordButton, #audioButton {
+#recordButton, #audioButton, #clearButton {
     padding: 10px 20px;
     background-color: #128C7E; /* WhatsApp color for buttons */
     border: none;
@@ -143,8 +144,39 @@ body {
     box-shadow: 0 1px 3px rgba(0, 0, 0, 0.1);
 }
 
-#recordButton:active, #audioButton:active {
+#recordButton:active, #audioButton:active, #clearButton:active {
     background-color: #075E54; /* darker shade for active state */
+}
+
+#clearButton {
+    background-color: #9E9E9E;
+}
+
+#clearButton:active {
+    background-color: #757575;
+}
+
+/* Pulsing animation while recording */
+@keyframes pulse {
+    0%   { box-shadow: 0 0 0 0 rgba(18, 140, 126, 0.6); }
+    70%  { box-shadow: 0 0 0 12px rgba(18, 140, 126, 0); }
+    100% { box-shadow: 0 0 0 0 rgba(18, 140, 126, 0); }
+}
+
+#recordButton.recording {
+    background-color: #e53935;
+    animation: pulse 1.2s infinite;
+}
+
+#recordButton.recording:active {
+    background-color: #b71c1c;
+}
+
+/* Disabled/loading state */
+#recordButton:disabled {
+    background-color: #9E9E9E;
+    cursor: not-allowed;
+    animation: none;
 }
 
 /* Translation section */
@@ -163,11 +195,34 @@ body {
     overflow-y: auto;
 }
 
+.box-header {
+    display: flex;
+    align-items: center;
+    justify-content: space-between;
+    margin-bottom: 10px;
+}
+
 #transcriptText, #translationText {
     color: #075E54; /* WhatsApp color for text headings */
     font-size: 1.2em;
     font-weight: bold;
-    margin-bottom: 10px;
+    margin: 0;
+}
+
+.copy-button {
+    background: none;
+    border: none;
+    cursor: pointer;
+    padding: 4px 6px;
+    border-radius: 4px;
+    font-size: 1em;
+    color: #075E54;
+    opacity: 0.6;
+    transition: opacity 0.2s;
+}
+
+.copy-button:hover {
+    opacity: 1;
 }
 
 #transcript, #translation {
@@ -175,17 +230,49 @@ body {
     font-size: 1em;
 }
 
+/* Toast notifications */
+#toastContainer {
+    position: fixed;
+    top: 16px;
+    left: 50%;
+    transform: translateX(-50%);
+    display: flex;
+    flex-direction: column;
+    align-items: center;
+    gap: 8px;
+    z-index: 1000;
+    pointer-events: none;
+}
+
+.toast {
+    padding: 10px 20px;
+    border-radius: 20px;
+    font-size: 0.9em;
+    color: #fff;
+    box-shadow: 0 2px 8px rgba(0, 0, 0, 0.2);
+    opacity: 1;
+    transition: opacity 0.4s;
+    max-width: 320px;
+    text-align: center;
+}
+
+.toast-error   { background-color: #e53935; }
+.toast-success { background-color: #128C7E; }
+.toast-info    { background-color: #616161; }
+
+.toast-fade-out { opacity: 0; }
+
 /* Media queries for responsive design */
 @media (max-width: 768px) {
     .lang-selector {
-        font-size: 0.8em; /* Adjust the font size */
+        font-size: 0.8em;
     }
 
-    #recordButton, #audioButton {
-        font-size: 0.9em; /* Adjust the font size */
+    #recordButton, #audioButton, #clearButton {
+        font-size: 0.9em;
     }
 
     .translation-box {
-        font-size: 0.9em; /* Adjust the font size */
+        font-size: 0.9em;
     }
 }

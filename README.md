@@ -2,8 +2,8 @@
 
 This repository is a template for anyone wishing to build quickly a web application using the following technologies:
 - Flask
-- OpenAI Speech-to-text API
-- OpenAI GPT API 
+- OpenAI Speech-to-text API (Whisper)
+- OpenAI GPT API (GPT-4o-mini)
 - Google Text-to-Speech API
 
 You are welcome to inspire and use the code freely for your own projects.
@@ -21,20 +21,21 @@ The showcase application, Travel AI Translator, is a multi-language transcriptio
 
 To see the Travel AI Translator in action, please visit the live demo webapp [here](https://lfontaine.pythonanywhere.com/) or download the android app on the Play Store [here](https://play.google.com/store/apps/details?id=com.end2endai.traveltranslatorai&pcampaignid=web_share).
 
-Try recording your own voice and see how efficiently and accurately it transcribes and translates your words. This tool can greatly assist you during your travels or in any cross-language conversation scenario. 
+Try recording your own voice and see how efficiently and accurately it transcribes and translates your words. This tool can greatly assist you during your travels or in any cross-language conversation scenario.
 
 ## Table of Contents
 
 1. [Getting Started](#getting-started)
 2. [Prerequisites](#prerequisites)
 3. [Installation](#installation)
-4. [Built With](#built-with)
-5. [Supported languages](#supported-languages)
-6. [How to Use](#how-to-use)
-7. [Contribute](#contribute)
-8. [License](#license)
-9. [Confidentiality rules](#confidentiality-rules)
-10. [Contact](#contact)
+4. [Deployment](#deployment)
+5. [Built With](#built-with)
+6. [Supported languages](#supported-languages)
+7. [How to Use](#how-to-use)
+8. [Contribute](#contribute)
+9. [License](#license)
+10. [Confidentiality rules](#confidentiality-rules)
+11. [Contact](#contact)
 
 ## Getting Started
 
@@ -42,57 +43,143 @@ Follow the steps below to set up the project locally.
 
 ### Prerequisites
 
-You need to have Python 3.9 and pip installed on your machine. You can download Python from here: https://www.python.org/downloads/.
-You also need an API key for OpenAI API.
+- Python 3.9+ and pip
+- An [OpenAI API key](https://platform.openai.com/api-keys)
 
 ### Installation
 
 1. Clone this repository:
 
-    ```
-    git clone https://github.com/Daugit/travel-translator.git
+    ```bash
+    git clone https://github.com/End2EndAI/travel-ai-translator.git
+    cd travel-ai-translator
     ```
 
 2. Install the required packages:
 
-    ```
+    ```bash
     pip install -r requirements.txt
     ```
-    
+
 3. Configure the OpenAI API Key
 
-    Create a `config.ini` file at the root of the project. Enter your OpenAI API Key in the following format:
+    **Option A — environment variable (recommended):**
+    ```bash
+    export OPENAI_API_KEY=your-key-here
+    ```
 
+    **Option B — config.ini file:**
+
+    Create a `config.ini` file at the root of the project:
     ```ini
     [OPENAI_API]
-    key = <your-key>
+    key = your-key-here
     ```
 
-    Make sure to replace `<your-key>` with your actual OpenAI API Key.
+4. Generate SSL certificates
 
-3. Generate a self signed certificate
-    
-    In order to be able to record audio in a browser, the flask app needs to have SSL certificates.
+    Browser microphone access requires HTTPS. Generate a self-signed certificate for local development:
 
-    Open a Terminal or Command Prompt in this project folder:
-
-    - On Unix-based systems, you can open a terminal.
-    - On Windows, you can use `git bash`
-
-    Generate a Private Key:
-    - Execute the following command to generate a private key (key.pem): ```openssl genrsa -out key.pem 2048```
-    This command creates a 2048-bit RSA private key. You can adjust the bit length for stronger encryption, but 2048 is generally sufficient.
-    - Generate a Self-Signed Certificate:
-    Now, generate a self-signed certificate (cert.pem) using the private key: ```openssl req -new -x509 -key key.pem -out cert.pem -days 365```
-    This command will prompt you to enter various details like country name, state, organization, etc. These details are used to fill in the certificate's subject field.
-
-4. Start the Flask server:
-    In Anaconda Prompt :
+    ```bash
+    openssl genrsa -out key.pem 2048
+    openssl req -new -x509 -key key.pem -out cert.pem -days 365 -subj "/CN=localhost"
     ```
+
+5. Start the Flask server:
+
+    ```bash
     flask --app app.py run --port 5009 --host 0.0.0.0 --cert=cert.pem --key=key.pem
     ```
 
-5. Navigate to http://localhost:5009 in your web browser.
+6. Navigate to `https://localhost:5009` in your web browser.
+
+    > Your browser will show a security warning for the self-signed certificate — click "Advanced" and proceed.
+
+---
+
+## Deployment
+
+### Vercel
+
+Vercel runs Flask as a serverless Python function. The `vercel.json` and `api/index.py` files are already included in this repository.
+
+1. **Install the Vercel CLI:**
+    ```bash
+    npm install -g vercel
+    ```
+
+2. **Log in to Vercel:**
+    ```bash
+    vercel login
+    ```
+
+3. **Deploy:**
+    ```bash
+    vercel --prod
+    ```
+
+    Vercel will detect `vercel.json` and deploy automatically.
+
+4. **Set environment variables** in the [Vercel dashboard](https://vercel.com/dashboard) under your project → Settings → Environment Variables:
+
+    | Variable | Description |
+    |---|---|
+    | `OPENAI_API_KEY` | Your OpenAI API key |
+    | `SECRET_KEY` | A random secret for Flask sessions |
+
+    Or set them via CLI:
+    ```bash
+    vercel env add OPENAI_API_KEY
+    vercel env add SECRET_KEY
+    ```
+
+5. Your app is live at `your-project.vercel.app`.
+
+    > **Note:** Vercel provides HTTPS automatically — browser microphone access works out of the box, no SSL certificate setup needed.
+
+    > **Note:** Audio files are stored in `/tmp` on Vercel (the filesystem is otherwise read-only on serverless). Files are ephemeral and served directly by the app — this works fine since audio is played immediately after translation.
+
+---
+
+### Render (free tier available)
+
+[Render](https://render.com) deploys directly from GitHub with zero configuration.
+
+1. **Push your code** to a GitHub repository.
+
+2. **Create a new Web Service** on Render and connect your GitHub repo.
+
+3. Set the following:
+   - **Runtime:** Python 3
+   - **Build command:** `pip install -r requirements.txt`
+   - **Start command:** `gunicorn app:app`
+
+4. Add `gunicorn` to your requirements:
+    ```bash
+    echo "gunicorn" >> requirements.txt
+    ```
+
+5. **Add environment variables** in the Render dashboard:
+   - `OPENAI_API_KEY` = your OpenAI key
+   - `SECRET_KEY` = a random string (e.g. `python -c "import secrets; print(secrets.token_hex(32))"`)
+
+6. Deploy. Render provides HTTPS automatically.
+
+    > **Note:** Browser microphone access works out of the box on Render since the app is served over HTTPS.
+
+---
+
+### Environment Variables Reference
+
+| Variable | Required | Description |
+|---|---|---|
+| `OPENAI_API_KEY` | Yes | Your OpenAI API key |
+| `SECRET_KEY` | No | Flask session secret (auto-generated if not set) |
+| `PORT` | No | Port to run on locally (default: `5009`) |
+| `SSL_CERT` | No | Path to SSL cert for local dev (default: `cert.pem`) |
+| `SSL_KEY` | No | Path to SSL key for local dev (default: `key.pem`) |
+
+---
 
 ## Built With
 
@@ -101,7 +188,7 @@ You also need an API key for OpenAI API.
 - JavaScript
 - Python
 - Flask
-- OpenAI API
+- OpenAI API (Whisper + GPT-4o-mini)
 - Google Text-to-Speech API
 
 ## Supported languages
@@ -112,16 +199,20 @@ Afrikaans, Arabic, Armenian, Azerbaijani, Belarusian, Bosnian, Bulgarian, Catala
 
 ## How to Use
 
-1. Select the input language - this is the language of your audio input.
-2. Select the output language - this is the language into which you want the audio input to be translated.
-3. Click the "Start" button to start recording your voice. The button will change to "Stop".
-4. Speak into your device's microphone in the selected input language.
-5. Click the "Stop" button to stop recording. The application will transcribe the audio, translate it to the selected output language, and provide the translation as text and audio.
-6. To swap the input and output languages, click on the arrow between the language selectors.
+1. Select the input language — this is the language you will speak.
+2. Select the output language — this is the language you want the translation in.
+3. Click **Start** to begin recording. The button turns red and pulses while recording.
+4. Speak into your device's microphone.
+5. Click **Stop**. The app transcribes your speech, translates it, and plays the audio translation.
+6. Use the **copy** buttons (📋) next to Transcript or Translation to copy the text.
+7. Click **Clear** to reset the output for a new recording.
+8. Click **Hear again** to replay the last translation audio.
+9. Click the arrow between languages to swap input and output.
+10. Switch to **Conversation** mode to automatically swap languages after each translation — useful for back-and-forth dialogue.
 
 ## Contribute
 
-Contributions are always welcome! Thanks !
+Contributions are always welcome! Thanks!
 
 ## License
 
@@ -130,7 +221,6 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE.md) f
 ## Confidentiality Rules
 
 We prioritize the privacy and confidentiality of our users. All audio recordings and transcriptions are processed securely using OpenAI's API and Google Text-to-Speech API. While these services ensure high accuracy and efficient translation, we want to assure our users that we do not store, share, or use your audio recordings and translations for any purpose other than to provide you with the service. Both OpenAI and Google have stringent data protection standards, and any data sent to their APIs is used solely for the purpose of transcription and translation. When using our application on the Android Play Store, rest assured that your data remains private and is treated with the utmost care. We are committed to upholding the highest standards of data protection and encourage users to review our privacy policy, as well as those of OpenAI and Google, for further details.
-
 
 ## Contact
 
