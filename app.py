@@ -168,8 +168,10 @@ def wait_for_file(file_path):
 
 
 def save_to_csv(transcript, ip_address, user_agent, filename="history/transcripts.csv"):
+    if IS_VERCEL:
+        filename = "/tmp/transcripts.csv"
     directory = os.path.dirname(filename)
-    if not os.path.exists(directory):
+    if directory and not os.path.exists(directory):
         os.makedirs(directory)
     with open(filename, mode="a", newline="") as file:
         writer = csv.writer(file)
